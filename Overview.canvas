@@ -1,0 +1,20 @@
+{
+	"nodes":[
+		{"id":"b4d0554f0a285f6c","x":-696,"y":-463,"width":250,"height":60,"type":"text","text":"Pi Camera"},
+		{"id":"f1664d31400e8995","x":-320,"y":-463,"width":250,"height":60,"type":"text","text":"Realsense"},
+		{"id":"b1d38eb60d7fa640","x":-747,"y":214,"width":250,"height":60,"type":"text","text":"Speed"},
+		{"id":"544cc8859e1868c2","x":-446,"y":214,"width":250,"height":60,"type":"text","text":"Turn"},
+		{"id":"5de8e894d3227526","x":65,"y":-468,"width":250,"height":60,"type":"text","text":"Line Tracker"},
+		{"id":"374a4c9809d1ba4c","x":400,"y":-468,"width":250,"height":60,"type":"text","text":"Global Navigation \n(accurate to 1 second)"},
+		{"id":"a0c166d0f14e82cf","x":720,"y":-463,"width":250,"height":60,"type":"text","text":"Available Rides"},
+		{"id":"016a46cf3d5a4d73","x":190,"y":-220,"width":250,"height":60,"type":"text","text":"Ride Selection"},
+		{"id":"2f9ba1bee8ab3a0e","x":-254,"y":-222,"width":250,"height":60,"type":"text","text":"Car Navigation"}
+	],
+	"edges":[
+		{"id":"143cc933fb4fc2cf","fromNode":"374a4c9809d1ba4c","fromSide":"bottom","toNode":"016a46cf3d5a4d73","toSide":"right"},
+		{"id":"eff295a142fa4527","fromNode":"a0c166d0f14e82cf","fromSide":"bottom","toNode":"016a46cf3d5a4d73","toSide":"right"},
+		{"id":"db2ab06497952aba","fromNode":"016a46cf3d5a4d73","fromSide":"left","toNode":"2f9ba1bee8ab3a0e","toSide":"right"},
+		{"id":"ee7b48c2b9087d6d","fromNode":"2f9ba1bee8ab3a0e","fromSide":"bottom","toNode":"544cc8859e1868c2","toSide":"top"},
+		{"id":"9c642d2d4ed3d3d8","fromNode":"2f9ba1bee8ab3a0e","fromSide":"bottom","toNode":"b1d38eb60d7fa640","toSide":"top"}
+	]
+}
