@@ -1,20 +1,38 @@
 {
 	"nodes":[
-		{"id":"b4d0554f0a285f6c","x":-696,"y":-463,"width":250,"height":60,"type":"text","text":"Pi Camera"},
-		{"id":"f1664d31400e8995","x":-320,"y":-463,"width":250,"height":60,"type":"text","text":"Realsense"},
-		{"id":"b1d38eb60d7fa640","x":-747,"y":214,"width":250,"height":60,"type":"text","text":"Speed"},
-		{"id":"544cc8859e1868c2","x":-446,"y":214,"width":250,"height":60,"type":"text","text":"Turn"},
-		{"id":"5de8e894d3227526","x":65,"y":-468,"width":250,"height":60,"type":"text","text":"Line Tracker"},
-		{"id":"374a4c9809d1ba4c","x":400,"y":-468,"width":250,"height":60,"type":"text","text":"Global Navigation \n(accurate to 1 second)"},
-		{"id":"a0c166d0f14e82cf","x":720,"y":-463,"width":250,"height":60,"type":"text","text":"Available Rides"},
-		{"id":"016a46cf3d5a4d73","x":190,"y":-220,"width":250,"height":60,"type":"text","text":"Ride Selection"},
-		{"id":"2f9ba1bee8ab3a0e","x":-254,"y":-222,"width":250,"height":60,"type":"text","text":"Car Navigation"}
+		{"id":"f1664d31400e8995","type":"text","text":"Intel Realsense","x":-128,"y":-635,"width":250,"height":60},
+		{"id":"a27806604a8af578","x":-128,"y":-516,"width":125,"height":54,"type":"text","text":"Video"},
+		{"id":"6ab88eed0d3974b0","x":2,"y":-514,"width":125,"height":50,"type":"text","text":"Depth"},
+		{"id":"d03e933cb48e699b","x":-340,"y":-240,"width":250,"height":60,"type":"text","text":"Event Controller"},
+		{"id":"b39560689eb64ffe","x":-571,"y":-380,"width":250,"height":60,"type":"text","text":"Vision System"},
+		{"id":"2f9ba1bee8ab3a0e","type":"text","text":"Path Planner","x":320,"y":-300,"width":250,"height":60},
+		{"id":"016a46cf3d5a4d73","type":"text","text":"Ride Selection","x":320,"y":-440,"width":250,"height":60},
+		{"id":"a0c166d0f14e82cf","type":"text","text":"Available Rides","x":680,"y":-635,"width":250,"height":60},
+		{"id":"374a4c9809d1ba4c","type":"text","text":"Global Navigation \n(accurate to 1 second)","x":220,"y":-635,"width":250,"height":60},
+		{"id":"b4d0554f0a285f6c","type":"text","text":"Pi Camera","x":-571,"y":-635,"width":250,"height":60},
+		{"id":"5de8e894d3227526","type":"text","text":"Line Tracker","x":-997,"y":-635,"width":250,"height":60},
+		{"id":"5d61413b67cdd751","x":-715,"y":180,"width":250,"height":60,"type":"text","text":"Motor Interface"},
+		{"id":"b1d38eb60d7fa640","type":"text","text":"Speed","x":-891,"y":354,"width":250,"height":60},
+		{"id":"544cc8859e1868c2","type":"text","text":"Turn","x":-590,"y":354,"width":250,"height":60},
+		{"id":"6f3ebaeff5000ac3","x":-715,"y":40,"width":250,"height":60,"type":"text","text":"Drive Controller"}
 	],
 	"edges":[
-		{"id":"143cc933fb4fc2cf","fromNode":"374a4c9809d1ba4c","fromSide":"bottom","toNode":"016a46cf3d5a4d73","toSide":"right"},
 		{"id":"eff295a142fa4527","fromNode":"a0c166d0f14e82cf","fromSide":"bottom","toNode":"016a46cf3d5a4d73","toSide":"right"},
-		{"id":"db2ab06497952aba","fromNode":"016a46cf3d5a4d73","fromSide":"left","toNode":"2f9ba1bee8ab3a0e","toSide":"right"},
-		{"id":"ee7b48c2b9087d6d","fromNode":"2f9ba1bee8ab3a0e","fromSide":"bottom","toNode":"544cc8859e1868c2","toSide":"top"},
-		{"id":"9c642d2d4ed3d3d8","fromNode":"2f9ba1bee8ab3a0e","fromSide":"bottom","toNode":"b1d38eb60d7fa640","toSide":"top"}
+		{"id":"8877e57c17f61020","fromNode":"f1664d31400e8995","fromSide":"bottom","toNode":"a27806604a8af578","toSide":"top"},
+		{"id":"1d6cced693b66f1b","fromNode":"f1664d31400e8995","fromSide":"bottom","toNode":"6ab88eed0d3974b0","toSide":"top"},
+		{"id":"a84205a9b6a16260","fromNode":"5d61413b67cdd751","fromSide":"bottom","toNode":"b1d38eb60d7fa640","toSide":"top"},
+		{"id":"0a8fa1e04f3e2590","fromNode":"5d61413b67cdd751","fromSide":"bottom","toNode":"544cc8859e1868c2","toSide":"top"},
+		{"id":"866e91ef334385bf","fromNode":"016a46cf3d5a4d73","fromSide":"bottom","toNode":"2f9ba1bee8ab3a0e","toSide":"top","label":"Start/Dest"},
+		{"id":"9acc34f2621dd6a5","fromNode":"a27806604a8af578","fromSide":"bottom","toNode":"b39560689eb64ffe","toSide":"right"},
+		{"id":"ea2c9fe2a16622a2","fromNode":"6ab88eed0d3974b0","fromSide":"bottom","toNode":"b39560689eb64ffe","toSide":"right"},
+		{"id":"54a35900c8966269","fromNode":"b39560689eb64ffe","fromSide":"bottom","toNode":"d03e933cb48e699b","toSide":"left","label":"Events"},
+		{"id":"69c9d5eb52e042c7","fromNode":"2f9ba1bee8ab3a0e","fromSide":"left","toNode":"d03e933cb48e699b","toSide":"right","label":"Path"},
+		{"id":"781cff26e870a4ce","fromNode":"d03e933cb48e699b","fromSide":"bottom","toNode":"6f3ebaeff5000ac3","toSide":"right","label":"Distance to stop, Turn Direction"},
+		{"id":"81ac62cbb1e36d04","fromNode":"5de8e894d3227526","fromSide":"bottom","toNode":"6f3ebaeff5000ac3","toSide":"left"},
+		{"id":"24d9b20f19b4cf0b","fromNode":"6f3ebaeff5000ac3","fromSide":"bottom","toNode":"5d61413b67cdd751","toSide":"top"},
+		{"id":"0202bd6ec1af76dd","fromNode":"b4d0554f0a285f6c","fromSide":"bottom","toNode":"b39560689eb64ffe","toSide":"top"},
+		{"id":"08fd15e83ffedd51","fromNode":"374a4c9809d1ba4c","fromSide":"bottom","toNode":"d03e933cb48e699b","toSide":"right","label":"Position"},
+		{"id":"b3ce3c445f45ad3e","fromNode":"374a4c9809d1ba4c","fromSide":"bottom","toNode":"016a46cf3d5a4d73","toSide":"top","label":"Position"},
+		{"id":"8d1cbc89e489be61","fromNode":"b39560689eb64ffe","fromSide":"bottom","toNode":"6f3ebaeff5000ac3","toSide":"top","label":"Barrier Location"}
 	]
 }
