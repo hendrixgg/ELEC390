@@ -9,4 +9,5 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
     - [ ] Review and edit sections🛫 2025-01-25 
     - [ ] ensure consistent formatting
         - [ ] paragraph spacing (vspace vs. newline vs. `\\` vs. `\\\\`?)
+        - [ ] technologies and tools table formatting
         - [ ] references
