@@ -11,3 +11,5 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
         - [ ] paragraph spacing (vspace vs. newline vs. `\\` vs. `\\\\`?)
         - [ ] technologies and tools table formatting
         - [ ] references
+- [x] Create Headlight Board for taxi
+- [x] Create Lift for Senior Ducks and Ducks with Disabilities
