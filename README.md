@@ -6,8 +6,18 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
 # Tasks
 - [ ] Project Proposal Report 📅 2025-01-26 
     - [ ] Write Sections📅 2025-01-25 
+        - [ ] Executive Summary
+        - [ ] Project Management
+        - [ ] Finish up data sources (where to get data)
+        - [ ] Conclusions
     - [ ] Review and edit sections🛫 2025-01-25 
     - [ ] ensure consistent formatting
-        - [ ] paragraph spacing (vspace vs. newline vs. `\\` vs. `\\\\`?)
+        - [ ] remove our names in headings 
+        - [x] paragraph spacing and indenting (vspace vs. newline vs. `\\` vs. `\\\\`?)
         - [ ] technologies and tools table formatting
-        - [ ] references
+            - [ ] Hendrix needs to update python libraries
+        - [ ] references 
+            - [ ] Jacob
+            - [ ] Hendrix
+            - [ ] Luke
+            - [ ] Matt
