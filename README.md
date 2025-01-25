@@ -6,10 +6,10 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
 # Tasks
 - [ ] Project Proposal Report 📅 2025-01-26 
     - [ ] Write Sections📅 2025-01-25 
-        - [ ] Executive Summary
-        - [ ] Project Management
-        - [ ] Finish up data sources (where to get data)
-        - [ ] Conclusions
+        - [ ] Executive Summary @Hendrix
+        - [ ] Project Management @Hendrix
+        - [ ] Finish up data sources (where to get data) @Hendrix
+        - [ ] Conclusions @Hendrix
     - [ ] Review and edit sections🛫 2025-01-25 
     - [ ] ensure consistent formatting
         - [ ] remove our names in headings 
