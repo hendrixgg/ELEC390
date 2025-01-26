@@ -20,7 +20,7 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
             - [ ] Jacob
             - [ ] Hendrix
             - [ ] Luke
-            - [ ] Matt
+            - [x] Matt
         - [ ] references
 - [x] Design Headlight Board for taxi
 - [x] Create Lift for Senior Ducks and Ducks with Disabilities
