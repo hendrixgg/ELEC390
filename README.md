@@ -17,7 +17,7 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
         - [ ] Matt
     - [ ] ensure consistent formatting
         - [x] remove our names in headings 
-        - [x] paragraph spacing and indenting (vspace vs. newline vs. `\\` vs. `\\\\`?)
+        - [x] paragraph spacing and indenting (vspace vs. newline vs. `\\` vs. `\\\\`?) (decided on indenting all but the first paragraph in a section)
         - [x] technologies and tools table formatting
             - [x] Hendrix needs to update python libraries
         - [ ] references 
@@ -26,4 +26,4 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
             - [ ] Luke
             - [x] Matt
 - [x] Design Headlight Board for taxi
-- [x] Create Lift for Senior Ducks and Ducks with Disabilities
+- [x] Create Lift for duck passengers
