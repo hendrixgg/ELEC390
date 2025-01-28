@@ -4,33 +4,46 @@ Queen's University 3rd year design project course on a small autonomous vehicle.
 Website for contest information: https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/LearningTeamHome.aspx
 
 # Tasks
-- [ ] prioritize tasks
-- [ ] plan times to do tasks
-- [ ] finish setting up PiCarX as described on the SharePoint
-- [ ] set up programming/testing environment on the PiCarX so that we can rapidly test all features
+- [x] prioritize tasks: everything with names on it are due by feb 11 ✅ 2025-01-28
+- [ ] finish setting up PiCarX as described on the SharePoint @Luke
+- [ ] set up programming/testing environment on the PiCarX so that we can rapidly test all features @Jacob
     - [ ] figure out software development environment (combining Python and C)
     - [ ] make PiCarX remote controllable or at least programmable (figure out the drive control interface)
-    - [ ] make PiCarX able to send API calls to VPFS and store results
     - [ ] make PiCarX able to sense data from all sensors simultaneously
     - [ ] make PiCarX able to record sensor data (ideally so that we can live stream sensor data to a laptop, perhaps at least the head camera feed)
-    - [ ] make PiCarX able to run software on both Raspberry Pi and Coral TPU
     - [ ] set up high-level software interface between sensors and drive controls and API calls so that we can incrementally add in each new feature as it is developed
+- [ ] make PiCarX able to run software on both Raspberry Pi and Coral TPU
+    - [ ] figure out how to run stuff on the Coral TPU
+- [ ] determine strategy for different detection of objects/patterns 
+    - [ ] road signs (stop, no entry, yield, one way) @Hendrix
+    - [ ] road markings (road boundary, road center line, intersection stop line, cross walk, one way arrow) @Jacob
+    - [ ] road obstacles (vehicles, duck pedestrians, other objects) @Hendrix
+        - [ ] take photos of specialty duck we got
+- [ ] represent the map of Quackston in software that aligns with the VPFS @Hendrix
+    - [ ] see website:
+        - https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/The-Town.aspx
+        - https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/GPS-and-Fare-System.aspx
+- [ ] VPFS Setup @Matt
+    - [ ] make PiCarX able to send API calls to VPFS and store results
+    - [ ] perhaps use flask, find some other library
+- [ ] setup basic vehicle controls @Jacob
+    - [ ] acceleration motors
+    - [ ] steering servo
+- [ ] setup vehicle signaling @Luke
+    - [ ] put break and turn signal lights on PiCarX
+    - [ ] make break light system work
+        - [ ] specify what states of the vehicle will trigger brake lights
+    - [ ] make turn signal light system work
+        - [ ] specify blinking rate and high-level software control interface
+- [ ] miscellaneous vehicle controls @Luke
+    - [ ] head camera servos
+    - [ ] duck lift servos
 - [ ] Test physical capabilities of drive controls
-    - [ ] turn radius at different speeds and road surfaces
-    - [ ] top speed on different road surfaces
+    - [ ] we could get some rubber matt to test the car on for feb 8
+    - [ ] turn radius at different speeds and road surfaces (feb 11)
+    - [ ] top speed on different road surfaces (feb 11)
     - [ ] minimum braking distance at different speeds and road surfaces from the point in time when braking is initiated in software
         - [ ] figure out how we are going to measure this (perhaps using the grayscale line detector?)
-- [ ] determine detection strategy for different objects/patterns
-    - [ ] road signs (stop, no entry, yield, one way)
-    - [ ] road markings (road boundary, road center line, intersection stop line, cross walk, one way arrow)
-    - [ ] road obstacles (vehicles, duck pedestrians, other objects)
-- [ ] represent the map of Quackston in software
-- [ ] put break and turn signal lights on PiCarX
-- [ ] make break light system work
-    - [ ] specify what states of the vehicle will trigger brake lights
-- [ ] make turn signal light system work
-    - [ ] specify blinking rate and high-level software control interface
-- [ ] make the duck lift controllable in software
 - [ ] break down more tasks here
     - [ ] route planning (optimal sequence of road and intersections between two destinations on the map)
     - [ ] path planning (specific path on the road to be followed by drive controls)
