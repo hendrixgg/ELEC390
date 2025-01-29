@@ -5,6 +5,9 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
 
 # Tasks
 - [x] prioritize tasks: everything with names on it are due by feb 11 ✅ 2025-01-28
+- [ ] write about ethics issue with road rule R4, conversation with Gregory Kelly @Hendrix
+    - My question: Will we get an "R4: Stay On the Road" infraction if we drive off the road to avoid another vehicle driving head-on to us?
+    - Gregory's response: That's a really interesting question. Got a good bit of discussion going in the teaching team's meeting. We aren't really even certain how it would be handled under real-life road laws (it appears it would be initially assessed, but a lot would come down to specifics and lawyers). For the time being, we've decided that R4 would still apply. However, we are considering mechanisms that would appropriately reward teams who achieve this type of capability. Regardless of how the rules evolve, this decision would make an excellent ethics consideration in your logbook and reports.
 - [ ] finish setting up PiCarX as described on the SharePoint @Luke
 - [ ] set up programming/testing environment on the PiCarX so that we can rapidly test all features @Jacob
     - [ ] figure out software development environment (combining Python and C)
