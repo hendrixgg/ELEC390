@@ -19,9 +19,10 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
     - [ ] figure out how to run stuff on the Coral TPU
 - [ ] determine strategy for different detection of objects/patterns 
     - [ ] road signs (stop, no entry, yield, one way) @Hendrix
+        - [ ] upload dataset of readsigns 📅 2025-03-07
     - [ ] road markings (road boundary, road center line, intersection stop line, cross walk, one way arrow) @Jacob
     - [ ] road obstacles (vehicles, duck pedestrians, other objects) @Hendrix
-        - [ ] take photos of specialty duck we got
+        - [ ] take photos of specialty duck we got 📅 2025-03-07
 - [ ] represent the map of Quackston in software that aligns with the VPFS @Hendrix
     - [ ] see website:
         - https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/The-Town.aspx
