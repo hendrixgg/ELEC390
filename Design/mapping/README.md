@@ -27,10 +27,10 @@ Node (these are the actual points we will consider driving to on the map, inters
 ```
 ```Haskell
 distanceSqauared :: MapLocation -> MapLocation -> Float
-distanceSquared (x1,y1) (x2, y2) = x*x + y*y
-where
-    x = x1-x2
-    y = y1-y2
+distanceSquared (x1, y1) (x2, y2) = x*x + y*y
+    where
+        x = x1-x2
+        y = y1-y2
 ```
 ```Haskell
 distance :: MapLocation -> MapLocation -> Float
@@ -119,8 +119,8 @@ TripPlan:
 -- Also depends on the distanceSquared function.
 closestNodeTo :: MapNodes -> MapLocation -> Node 
 closestNodeTo nodes loc = nodes[i]
-where
-    i = argmin (distanceSquared loc . nodeLocation) nodes
+    where
+        i = argmin (distanceSquared loc . nodeLocation) nodes
 ```
 ```Haskell
 -- Actually depends on the closestNodeTo function to satisfy the requirement of TripPlan.
@@ -139,8 +139,9 @@ createTripRoute :: MapNodes -> TripActual -> TripRoute
 ```Haskell
 createTripPlan :: TripRequest -> TripPlan
 createTripPlan request = { "request": request, "actual": actual, "route": route }
-where
-    actual = tripRequestToActual request -- this must satisfy the requirement specified in TripPlan
-    route = createTripRoute actual -- this must satisfy the requirement specified in TripPlan
+    where
+        route = createTripRoute actual -- this must satisfy the requirement specified in TripPlan
+            where
+                actual = tripRequestToActual request -- this must satisfy the requirement specified in TripPlan
 ```
 
