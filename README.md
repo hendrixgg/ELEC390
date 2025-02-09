@@ -5,7 +5,7 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
 
 # Tasks
 - [x] prioritize tasks: everything with names on it are due by feb 11 ✅ 2025-01-28
-- [ ] write about ethics issue with road rule R4, conversation with Gregory Kelly @Hendrix
+- [x] write about ethics issue with road rule R4, conversation with Gregory Kelly @Hendrix ✅ 2025-02-08
     - My question: Will we get an "R4: Stay On the Road" infraction if we drive off the road to avoid another vehicle driving head-on to us?
     - Gregory's response: That's a really interesting question. Got a good bit of discussion going in the teaching team's meeting. We aren't really even certain how it would be handled under real-life road laws (it appears it would be initially assessed, but a lot would come down to specifics and lawyers). For the time being, we've decided that R4 would still apply. However, we are considering mechanisms that would appropriately reward teams who achieve this type of capability. Regardless of how the rules evolve, this decision would make an excellent ethics consideration in your logbook and reports.
 - [ ] finish setting up PiCarX as described on the SharePoint @Luke
@@ -23,10 +23,11 @@ Website for contest information: https://queensuca.sharepoint.com/teams/CCT-9384
     - [ ] road markings (road boundary, road center line, intersection stop line, cross walk, one way arrow) @Jacob
     - [ ] road obstacles (vehicles, duck pedestrians, other objects) @Hendrix
         - [ ] take photos of specialty duck we got 📅 2025-03-07
-- [ ] represent the map of Quackston in software that aligns with the VPFS @Hendrix
-    - [ ] see website:
+- [x] represent the map of Quackston in software that aligns with the VPFS @Hendrix ✅ 2025-02-09
+    - [x] see website: ✅ 2025-02-09
         - https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/The-Town.aspx
         - https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/GPS-and-Fare-System.aspx
+    - [x] see [[ELEC390/ELEC390/Design/mapping/README|README]] for details
 - [ ] VPFS Setup @Matt
     - [ ] make PiCarX able to send API calls to VPFS and store results
     - [ ] perhaps use flask, find some other library
