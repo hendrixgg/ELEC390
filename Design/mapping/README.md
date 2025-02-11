@@ -1,4 +1,6 @@
 # Road Map Representation
+## To Incorporate
+- Need to differentiate between nodes that have the car facing in different directions for linking multiple paths together.
 ## Map Model
 Map Dimensions: 
 - sources: https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/GPS-and-Fare-System.aspx, https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/The-Town.aspx
@@ -6,7 +8,7 @@ Map Dimensions:
 - in meters: $(x,y)\in[0,6.096]\times[0,4.8768]$ (float single precision)
 - origin is positioned in the bottom-left corner of the map
 
-MapLocation:
+MapPoint:
 ```python
 {
     "x": float, # x\in[0,6.096]
@@ -21,19 +23,19 @@ Node (these are the actual points we will consider driving to on the map, inters
 ```python
 {
     "id": int,
-    "location": MapLocation,
+    "location": MapPoint,
     "type": "intersection" | "road", # perhaps this could be calculated using MapRegions, this may not be necessary immediately
 }
 ```
 ```Haskell
-distanceSqauared :: MapLocation -> MapLocation -> Float
+distanceSqauared :: MapPoint -> MapPoint -> Float
 distanceSquared (x1, y1) (x2, y2) = x*x + y*y
     where
         x = x1-x2
         y = y1-y2
 ```
 ```Haskell
-distance :: MapLocation -> MapLocation -> Float
+distance :: MapPoint -> MapPoint -> Float
 distance = sqrt . distanceSquared
 ```
 Edge (directed edge):
@@ -88,8 +90,8 @@ Map:
 TripRequest (a trip request from the perspective of the routing algorithm):
 ```python
 {
-    "src": MapLocation,
-    "dest": MapLocation,
+    "src": MapPoint,
+    "dest": MapPoint,
 }
 ```
 TripActual:
@@ -117,7 +119,7 @@ TripPlan:
 ```Haskell
 -- Actually depends on the Map (more specifically, the list of nodes to choose from)
 -- Also depends on the distanceSquared function.
-closestNodeTo :: MapNodes -> MapLocation -> Node 
+closestNodeTo :: MapNodes -> MapPoint -> Node 
 closestNodeTo nodes loc = nodes[i]
     where
         i = argmin (distanceSquared loc . nodeLocation) nodes
