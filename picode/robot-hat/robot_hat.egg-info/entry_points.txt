@@ -1,0 +1,2 @@
+[console_scripts]
+robot_hat = robot_hat:__main__
