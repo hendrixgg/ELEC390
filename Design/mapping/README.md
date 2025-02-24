@@ -22,7 +22,6 @@ MapRegion:
 Node (these are the actual points we will consider driving to on the map, intersections and road midpoints between intersections):
 ```python
 {
-    "id": int,
     "location": MapPoint,
     "type": "intersection" | "road", # perhaps this could be calculated using MapRegions, this may not be necessary immediately
 }
@@ -41,7 +40,6 @@ distance = sqrt . distanceSquared
 Edge (directed edge):
 ```python
 {
-    "id": int,
     "src": Node,
     "dest": Node,
     "length": float, # length in meters, some positive value >= straight line distance from src to dest. This is included because roads may be curved so distance can't be calculated by Node-Node straight line distance.
