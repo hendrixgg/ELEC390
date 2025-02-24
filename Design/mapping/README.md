@@ -122,11 +122,13 @@ closestNodeTo nodes loc = nodes[i]
     where
         i = argmin (distanceSquared loc . nodeLocation) nodes
 ```
+
 ```Haskell
 -- Actually depends on the closestNodeTo function to satisfy the requirement of TripPlan.
 tripRequestToActual :: TripRequest -> TripActual
 tripRequestToActual {src, dest} = {"src": closestNodeTo src, "dest": closestNodeTo dest}
 ```
+
 ```Haskell
 -- Actually depends on the Map also 
 -- need to implement A* algorithm.
@@ -136,6 +138,7 @@ tripRequestToActual {src, dest} = {"src": closestNodeTo src, "dest": closestNode
 createTripRoute :: MapNodes -> TripActual -> TripRoute
 -- see https://en.wikipedia.org/wiki/A*_search_algorithm for pseudocode
 ```
+
 ```Haskell
 createTripPlan :: TripRequest -> TripPlan
 createTripPlan request = { "request": request, "actual": actual, "route": route }
