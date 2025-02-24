@@ -16,6 +16,8 @@
 #define REG_PSC2 0x50
 #define REG_ARR2 0x54
 
+#define ADC_REG 0x17 // ADC channel register
+
 int i2c_fd;
 
 // Function to write to an I2C register
@@ -28,6 +30,20 @@ void i2c_write(int reg, int value) {
         perror("I2C write failed");
         exit(1);
     }
+}
+
+// Function to read from an I2C register
+int i2c_read(int reg) {
+    unsigned char buffer[2];
+    if (write(i2c_fd, &reg, 1) != 1) {
+        perror("I2C write (for read) failed");
+        exit(1);
+    }
+    if (read(i2c_fd, buffer, 2) != 2) {
+        perror("I2C read failed");
+        exit(1);
+    }
+    return (buffer[0] << 8) | buffer[1];
 }
 
 // Set PWM frequency
@@ -76,6 +92,13 @@ int main() {
     set_pwm_duty(12, 00.0);
 
     printf("PWM set to 50%% duty cycle\n");
+
+    // Read ADC value from channel 0
+    while(1){
+        int adc_value = i2c_read(ADC_REG);
+        printf("ADC Channel 0 Value: %d\n", adc_value);
+        sleep(1);
+    }
 
     close(i2c_fd);
     return 0;
