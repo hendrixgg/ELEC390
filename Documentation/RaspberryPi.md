@@ -1,6 +1,6 @@
 # Accessing the Pi
 Instructions are identical on windows and linux:
-1. `ssh elec390@390pi.local`
+1. `ssh elec390@team2pi.local`
 # Raspberry Pi MAC Address
 ```
 > ip link show
