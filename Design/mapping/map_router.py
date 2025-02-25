@@ -146,12 +146,24 @@ def raw_map_check(map: RawMap) -> tuple[list[Node], list[Edge]]:
     return error_nodes, error_edges
 
 
-class AdjListMap(list[list[Edge]]):
-    def __new__(cls, map: RawMap):
-        adj_list = {node: [] for node in map.nodes}
-        for edge in map.edges:
-            adj_list[edge.src()].append(edge)
-        return adj_list
+class AdjListMap(tuple[RawMap, list[list[EdgeId]]]):
+    """A map with an adjacency list representation of the edges. Must be grounded in a RawMap."""
+    # map_ref: RawMap
+    # adjacencies: list[list[EdgeId]]
+    def __new__(cls, map_ref: RawMap):
+        adjacencies = [[] for _ in range(len(map_ref.nodes))]
+        for edge_id, edge in enumerate(map_ref.edges):
+            src_id = map_ref.nodes.index(edge.src())
+            adjacencies[src_id].append(edge_id)
+        return super().__new__(cls, (map_ref, adjacencies))
+
+    def map(self) -> RawMap:
+        """Return the RawMap reference."""
+        return self[0]
+
+    def adjacencies(self) -> list[list[EdgeId]]:
+        """Return the adjacency list representation of the map."""
+        return self[1]
 
 
 TripRequest = DirectedSegment
@@ -187,22 +199,17 @@ class TripActual(DirectedSegment):
 class TripRoute(list[EdgeId]):
     """A route is a list of n edges that form a path from the source node to the destination node of the trip. The map is just used for validation in initialization, and it is simply stored as a reference.
 
-    The route is valid if all edges are in the map, and forall 0 <= i <= n-2. map.edges[edge_id[i]].dest = map.edges[edge_id[i+1]].src."""
-    def __new__(cls, map: RawMap, edge_ids: list[EdgeId]):
+    A route is a list of n>=0 edge_ids validated against a TripActual, trip. Where: 
+    - If n=0, then trip.src = trip.dest. 
+    - If n>0, then trip.src = map.edges[edge_id[0]].src and trip.dest = map.edges[edge_id[n-1]].dest. 
+    - If n>1, then forall 0 <= i <= n-2. map.edges[edge_id[i]].dest = map.edges[edge_id[i+1]].src. """
+    def __new__(cls, trip: TripActual, edge_ids: list[EdgeId]):
         # assert that all edge_ids are in the map
-        error_edges = [edge_id for edge_id in edge_ids if not map.edge_id_valid(
-            edge_id)]
+        error_edges = [id for id in edge_ids if not trip.map.edge_id_valid(
+            id)]
         if error_edges:
             raise ValueError(
-                f"Invalid edges: edge ids {error_edges} are out of bounds for map with {len(map.edges)} edges (must have 0 <= edge_id < len(map.edges)).")
-        # assert that forall 0 <= i <= n-2. edge[i].dest = edge[i+1].src
-        for id1, id2 in zip(edge_ids[:-1], edge_ids[1:]):
-            if map.edges[id1].dest() != map.edges[id2].src():
-                raise ValueError(
-                    f"Invalid TripRoute edges: map.edges[{id1}].dest != map.edges[{id2}].src ({map.edges[id1].dest()} != {map.edge_ids[id2].src()})")
-        instance = super().__new__(cls, edge_ids)
-        instance.map = map
-        return instance
+                f"Invalid edge_ids: {error_edges} not in {trip.map.edges}")
 
     def __repr__(self):
         return f"TripRoute({self})"
