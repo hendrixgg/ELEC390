@@ -47,7 +47,9 @@ def argmin(iterable: Sequence, key: Callable[[Any], Any] = None):
 
 
 def tripRequestToActualTrip(map: AdjListMap, request: TripRequest) -> ActualTrip:
-    """This will fail if the `len(map.nodes)==0` map has no nodes. Because on a map with no nodes, no TripActual is possible."""
+    """Return the ActualTrip that is as close to the request as possible on the map.
+
+    This will fail if `len(map.nodes)==0` (map has no nodes). Because on a map with no nodes, no TripActual is possible."""
     # If the request is already in the map, no need to change the locations.
     if len(map.raw.nodes) == 0:
         raise ValueError("Cannot create a TripActual on a map with no nodes.")
@@ -192,7 +194,7 @@ if __name__ == "__main__":
     except ValueError as _:
         print(traceback.format_exc())
 
-    # test tripRequestToValidTrip function
+    # test tripRequestToActualTrip function
     raw_map = RawMap(MapDimensions((0, 1), (0, 1)), [Node(0.5, 0.5)], [])
     map = AdjListMap(raw_map)
     # invalid request
