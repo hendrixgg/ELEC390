@@ -1,9 +1,10 @@
 # Road Map Representation
 ## To Incorporate
+- Next is to load the actual map from the csv file and test it using floyd warshall router. 
 - Need to differentiate between nodes that have the car facing in different directions for linking multiple paths together.
 ## Map Model
 Map Dimensions: 
-- sources: https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/GPS-and-Fare-System.aspx, https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/The-Town.aspx
+- sources: https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/GPS-and-Fare-System.aspx, https://queensuca.sharepoint.com/teams/CCT-938446/SitePages/The-Town.aspx (see the svg files under Environment-Specs/)
 - in feet: $(x,y)\in[0,20]\times[0,16]$ (float single precision)
 - in meters: $(x,y)\in[0,6.096]\times[0,4.8768]$ (float single precision)
 - origin is positioned in the bottom-left corner of the map
