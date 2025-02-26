@@ -1,5 +1,5 @@
-from map_types import AdjListMap, NodeId, EdgeId, Edge, distance
-from rectangular_region import DirectedSegment
+from map_types import AdjListMap, NodeId, EdgeId, Edge
+from rectangular_region import DirectedSegment, distance
 from typing import Tuple, Callable, Sequence, Any
 
 TripRequest = DirectedSegment
