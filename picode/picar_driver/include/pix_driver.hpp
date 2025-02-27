@@ -10,8 +10,13 @@
 #ifndef _PIX_DRIVER_H_
 #define _PIX_DRIVER_H_
 
+// Uncomment to replace the Raspberry Pi GPIO Library with Null Functions
+#define TEST
+
 #include <stdint.h>
+#ifndef TEST
 #include <gpiod.h>
+#endif
 
 class PiX {
     public:
@@ -125,9 +130,11 @@ class PiX {
         float camera_tilt;
         float camera_pan;
 
-        // Gpio Handles
+        // GPIO Handles
+#ifndef TEST
         struct gpiod_chip *gpio_chip;
         struct gpiod_line *gpio_lines[32];
+#endif
 
         // I2C Device Conversion Functions
         uint32_t deg_to_pwm(float deg, float max_deg);
@@ -140,6 +147,9 @@ class PiX {
         int i2c_fd;
         int i2c_read(int reg);
         int i2c_write(int reg, int value);
+        int set_pwm(int channel, uint16_t val);
+
+        // GPIO Interface Functions
         int gpio_lib_init(void);
         int gpio_init(int pin, bool output);
         int gpio_write(int pin, bool value);
@@ -159,6 +169,7 @@ class PiX {
 
         // Device Pin Mappings (Note: Some are digital, some are pwm, some are analog)
         constexpr static int pin_lineFollow[3] = {0, 1, 2};
+        // BCM Pins (Raspberry Pi)
         constexpr static int pin_driveDir[2] = {23, 24};
         constexpr static int pin_drivePow[2] = {13, 12};
         constexpr static int pin_turn = 0;

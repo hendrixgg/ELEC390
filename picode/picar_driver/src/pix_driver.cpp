@@ -16,10 +16,10 @@
 #include <unistd.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
+#ifndef TEST
 #include <gpiod.h>
+#endif
 #include <math.h>
-
-#define GPIO_CHIP "/dev/gpiochip0"
 
 PiX::PiX(void){
 
@@ -37,7 +37,9 @@ PiX::PiX(void){
     }
     
     // Initialize Default Values
+#ifndef TEST
     std::fill_n(this->gpio_lines, 32, nullptr);
+#endif
     this->turn_offset = 0;
     this->turn_angle = 0;
     this->drive_power = 0;
@@ -57,6 +59,7 @@ PiX::~PiX(){
     this->set_drivePower(0);
     // Close the I2C Device Connection on Class Deconstruction
     close(this->i2c_fd);
+#ifndef TEST
     // Close GPIO handles
     if (this->gpio_chip) {
         for (int i = 0; i < 32; i++) {
@@ -66,10 +69,12 @@ PiX::~PiX(){
         }
         gpiod_chip_close(this->gpio_chip);
     }
+#endif
 }
 
 void PiX::set_turnAngle(float angle){
-
+    uint32_t pwm = this->deg_to_pwm(angle, 30);
+    this->set_pwm(pin_turn, pwm);
 }
 
 void PiX::set_turnOffset(float offset_angle){}
@@ -181,6 +186,11 @@ int PiX::i2c_write(int reg, int value){
     return 0;
 }
 
+int PiX::set_pwm(int pin, uint16_t val){
+    this->i2c_write(PiX::pwm_base + pin, val);
+}
+
+#ifndef TEST
 int PiX::gpio_lib_init() {
     this->gpio_chip = gpiod_chip_open_by_name("gpiochip0");
     if (!this->gpio_chip) {
@@ -243,7 +253,19 @@ int PiX::gpio_write(int pin, bool value) {
 
     return 0;
 }
+#endif
 
+#ifdef TEST
+int PiX::gpio_lib_init(void){
+    return 0;
+}
+int PiX::gpio_init(int pin, bool output){
+    return 0;
+}
+int PiX::gpio_write(int pin, bool value){
+    return 0;
+}
 
+#endif
 
 
