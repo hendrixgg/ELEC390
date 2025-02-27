@@ -1,3 +1,3 @@
 in map_nodes_from_sharepoint.csv, the node_ids are based on sorting the nodes by y_cm, then by x_cm.
 
-in map_edges_from_sharepoint_nodes.csv, the edge_ids are based on sorting the edges by node_id_src, then by node_id_dest.
+in map_edges_from_sharepoint_nodes.csv, the edge_ids are based on sorting the edges by src_node_id, then by dest_node_id.
