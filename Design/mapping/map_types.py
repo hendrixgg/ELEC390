@@ -1,10 +1,5 @@
 from typing import Iterable, NamedTuple, Tuple
 from rectangular_region import RectangularRegion, Point2D, distance, in_region
-# MAP_X_MIN = 0
-# MAP_X_MAX = 6.096
-# MAP_Y_MIN = 0
-# MAP_Y_MAX = 4.8768
-
 
 MapDimensions = RectangularRegion
 MapRegion = RectangularRegion
@@ -55,13 +50,14 @@ class RawMap(Tuple[MapDimensions, Tuple[Node, ...], Tuple[Edge, ...]]):
             raise ValueError(
                 f"Invalid nodes: {error_nodes=} not within {dimensions=}")
         # assert that all edges refer to valid in node indices
-        error_edges = [edge for edge in raw_edges if not (0 <= edge.src < len(
+        error_edges = [edge for edge in edges if not (0 <= edge.src < len(
             nodes)) or not (0 <= edge.dest < len(nodes))]
         if error_edges:
             raise ValueError(
                 f"Invalid edges node ids: {error_edges=} not within the range of valid node ids [0, {len(nodes)-1}]")
+        # assert that all edges have length greater than or equal to the euclidean distance between the source and destination nodes
         error_edges = [
-            edge for edge in raw_edges if edge.length < distance(nodes[edge.src], nodes[edge.dest])]
+            (edge, distance(nodes[edge.src], nodes[edge.dest])) for edge in edges if edge.length < distance(nodes[edge.src], nodes[edge.dest])]
         if error_edges:
             raise ValueError(
                 f"Invalid edges: {error_edges=} must have length greater than or equal to the euclidean distance between the source and destination nodes")
