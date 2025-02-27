@@ -11,6 +11,7 @@
 #define _PIX_DRIVER_H_
 
 #include <stdint.h>
+#include <gpiod.h>
 
 class PiX {
     public:
@@ -124,6 +125,10 @@ class PiX {
         float camera_tilt;
         float camera_pan;
 
+        // Gpio Handles
+        struct gpiod_chip *gpio_chip;
+        struct gpiod_line *gpio_lines[32];
+
         // I2C Device Conversion Functions
         uint32_t deg_to_pwm(float deg, float max_deg);
         float    adc_to_volt(uint32_t adc_reading);
@@ -135,6 +140,7 @@ class PiX {
         int i2c_fd;
         int i2c_read(int reg);
         int i2c_write(int reg, int value);
+        int gpio_lib_init(void);
         int gpio_init(int pin, bool output);
         int gpio_write(int pin, bool value);
 

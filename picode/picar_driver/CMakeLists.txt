@@ -64,6 +64,7 @@ target_compile_options(${EXECUTABLE} PRIVATE
 target_link_libraries(${EXECUTABLE}
     -lm
     -lc
+    -lgpiod
     # -lgcc
     # -lnosys
     # -lrdimon

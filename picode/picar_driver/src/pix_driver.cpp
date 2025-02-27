@@ -9,18 +9,17 @@
 
 #include "pix_driver.hpp"
 #include <stdio.h>
+#include <iostream>
+#include <cstdio>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
+#include <gpiod.h>
 #include <math.h>
 
-#define EXPORT_PATH "/sys/class/gpio/export"
-#define UNEXPORT_PATH "/sys/class/gpio/unexport"
-#define GPIO_PATH "/sys/class/gpio/gpio%d/"
-#define DIRECTION_PATH GPIO_PATH "direction"
-#define VALUE_PATH GPIO_PATH "value"
+#define GPIO_CHIP "/dev/gpiochip0"
 
 PiX::PiX(void){
 
@@ -38,6 +37,7 @@ PiX::PiX(void){
     }
     
     // Initialize Default Values
+    std::fill_n(this->gpio_lines, 32, nullptr);
     this->turn_offset = 0;
     this->turn_angle = 0;
     this->drive_power = 0;
@@ -48,6 +48,7 @@ PiX::PiX(void){
     // Setup PWM
     this->setup_pwm(50);
     // Setup Drive Direction Pins
+    this->gpio_lib_init();
     this->gpio_init(pin_driveDir[0], true);
     this->gpio_init(pin_driveDir[1], true);
 }
@@ -56,6 +57,15 @@ PiX::~PiX(){
     this->set_drivePower(0);
     // Close the I2C Device Connection on Class Deconstruction
     close(this->i2c_fd);
+    // Close GPIO handles
+    if (this->gpio_chip) {
+        for (int i = 0; i < 32; i++) {
+            if (this->gpio_lines[i]) {
+                gpiod_line_release(this->gpio_lines[i]);
+            }
+        }
+        gpiod_chip_close(this->gpio_chip);
+    }
 }
 
 void PiX::set_turnAngle(float angle){
@@ -171,49 +181,69 @@ int PiX::i2c_write(int reg, int value){
     return 0;
 }
 
-int PiX::gpio_init(int pin, bool output){
-    char path[64];
-    int fd;
-
-    // Export the GPIO pin
-    fd = open(EXPORT_PATH, O_WRONLY);
-    if (fd < 0) {
-        perror("Failed to open GPIO export");
+int PiX::gpio_lib_init() {
+    this->gpio_chip = gpiod_chip_open_by_name("gpiochip0");
+    if (!this->gpio_chip) {
+        perror("Failed to open GPIO chip");
         return -1;
     }
-    dprintf(fd, "%d", pin);
-    close(fd);
-
-    // Set the direction
-    snprintf(path, sizeof(path), DIRECTION_PATH, pin);
-    fd = open(path, O_WRONLY);
-    if (fd < 0) {
-        perror("Failed to set GPIO direction");
-        return -1;
-    }
-    if (output)
-        write(fd, "out", 3);
-    else
-        write(fd, "in", 2);
-    close(fd);
-
+    // printf("GPIO library initialized successfully\n");
     return 0;
 }
 
-int PiX::gpio_write(int pin, bool value){
-    char path[64];
-    int fd;
+int PiX::gpio_init(int pin, bool output) {
+    if (!this->gpio_chip) {
+        std::cerr << "Error: GPIO chip not initialized. Call gpio_library_init() first.\n";
+        return -1;
+    }
 
-    snprintf(path, sizeof(path), VALUE_PATH, pin);
-    fd = open(path, O_WRONLY);
-    if (fd < 0) {
+    if (pin < 0 || pin >= 32) {
+        std::cerr << "Invalid pin number: " << pin << std::endl;
+        return -1;
+    }
+
+    this->gpio_lines[pin] = gpiod_chip_get_line(this->gpio_chip, pin);
+    if (!this->gpio_lines[pin]) {
+        perror("Failed to get GPIO line");
+        return -1;
+    }
+
+    // Release line if it's already requested
+    if (gpiod_line_is_requested(this->gpio_lines[pin])) {
+        // printf("GPIO %d is already requested, releasing it.\n", pin);
+        gpiod_line_release(this->gpio_lines[pin]);
+    }
+
+    struct gpiod_line_request_config config;
+    config.consumer = "gpio_control";
+    config.request_type = output ? GPIOD_LINE_REQUEST_DIRECTION_OUTPUT : GPIOD_LINE_REQUEST_DIRECTION_INPUT;
+    config.flags = 0;
+
+    if (gpiod_line_request(this->gpio_lines[pin], &config, output ? 1 : 0) < 0) {
+        perror("Failed to request GPIO line");
+        return -1;
+    }
+
+    // printf("GPIO %d initialized as %s\n", pin, output ? "OUTPUT" : "INPUT");
+    return 0;
+}
+
+int PiX::gpio_write(int pin, bool value) {
+    struct gpiod_line* line = gpiod_chip_get_line(this->gpio_chip, pin);
+    if (!line) {
+        perror("Failed to get GPIO line for writing");
+        return -1;
+    }
+
+    if (gpiod_line_set_value(line, value) < 0) {
         perror("Failed to set GPIO value");
+        printf("on GPIO %d", pin);
         return -1;
     }
-    dprintf(fd, "%d", value);
-    close(fd);
 
     return 0;
 }
+
+
 
 
