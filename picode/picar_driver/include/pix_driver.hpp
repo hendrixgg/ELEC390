@@ -11,7 +11,7 @@
 #define _PIX_DRIVER_H_
 
 // Uncomment to replace the Raspberry Pi GPIO Library with Null Functions
-#define TEST
+// #define TEST
 
 #include <stdint.h>
 #ifndef TEST
@@ -139,7 +139,6 @@ class PiX {
 #endif
 
         // I2C Device Conversion Functions
-        uint32_t deg_to_pwm(float deg, float max_deg);
         float    adc_to_volt(uint32_t adc_reading);
 
         // Device Setup Functions
@@ -177,11 +176,17 @@ class PiX {
         constexpr static int pin_lineFollow[3] = {0, 1, 2};
         // BCM Pins (Raspberry Pi)
         constexpr static int pin_driveDir[2] = {23, 24};
+        // Hat Pins
         constexpr static int pin_drivePow[2] = {13, 12};
         constexpr static int pin_turn = 0;
         constexpr static int pin_ultrasonic[2] = {2, 3};
         constexpr static int pin_lift[2] = {3, 4};
         constexpr static int pin_camera[2] = {1, 2};
+
+        // Device Constants
+        constexpr static float turn_max_deg = 30;
+        constexpr static uint32_t turn_min_pwm = 60;
+        constexpr static uint32_t turn_max_pwm = 105;
 };
 
 #endif

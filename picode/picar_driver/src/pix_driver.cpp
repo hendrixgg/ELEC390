@@ -78,7 +78,9 @@ PiX::~PiX(){
 
 void PiX::set_turnAngle(float angle){
     angle += this->turn_offset;
-    uint32_t pwm = this->deg_to_pwm(angle, 30);
+    uint32_t pwm = turn_min_pwm + ((angle + turn_max_deg) * (turn_max_pwm - turn_min_pwm)) / (2 * turn_max_deg);
+    pwm = pwm > turn_max_pwm ? turn_max_pwm : pwm;
+    pwm = pwm < turn_min_pwm ? turn_min_pwm : pwm;
     this->pwm_set_pulse_width(pin_turn, pwm);
 }
 
@@ -142,10 +144,6 @@ float PiX::get_lineAverage(void){
 
 float PiX::get_lineDeviation(void){
     return 0.0;
-}
-
-uint32_t PiX::deg_to_pwm(float deg, float max_deg){
-    return (uint32_t)((max_deg/2 + deg)*1499/max_deg) + 1;
 }
 
 float PiX::adc_to_volt(uint32_t adc_reading){
