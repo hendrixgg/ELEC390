@@ -53,6 +53,7 @@ PiX::PiX(void){
 }
 
 PiX::~PiX(){
+    this->set_drivePower(0);
     // Close the I2C Device Connection on Class Deconstruction
     close(this->i2c_fd);
 }
@@ -69,12 +70,13 @@ float PiX::get_turnAngle(void){
 
 void PiX::set_drivePower(int power){
     if(power > 0){
-        gpio_write(pin_driveDir[0], true);
-        gpio_write(pin_driveDir[1], false);
-    }
-    else{
         gpio_write(pin_driveDir[0], false);
         gpio_write(pin_driveDir[1], true);
+    }
+    else{
+        gpio_write(pin_driveDir[0], true);
+        gpio_write(pin_driveDir[1], false);
+        power = -power;
     }
     this->i2c_write(PiX::pwm_base + pin_drivePow[0], (int)((power/100.0)*65535));
     this->i2c_write(PiX::pwm_base + pin_drivePow[1], (int)((power/100.0)*65535));

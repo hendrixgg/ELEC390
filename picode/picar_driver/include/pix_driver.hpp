@@ -153,7 +153,7 @@ class PiX {
 
         // Device Pin Mappings (Note: Some are digital, some are pwm, some are analog)
         constexpr static int pin_lineFollow[3] = {0, 1, 2};
-        constexpr static int pin_driveDir[2] = {4, 5};
+        constexpr static int pin_driveDir[2] = {23, 24};
         constexpr static int pin_drivePow[2] = {13, 12};
         constexpr static int pin_turn = 0;
         constexpr static int pin_ultrasonic[2] = {2, 3};

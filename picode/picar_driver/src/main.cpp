@@ -16,10 +16,13 @@ int main(int argc, char **argv){
     std::cout << "Hello World\n";
     printf("Hello World\n");
     PiX px = PiX();
+    int power = 100;
     for(int i = 0; i < 2; i++){
-        px.set_drivePower(20);
+        printf("Driving Forwards\n");
+        px.set_drivePower(power);
         sleep(1);
-        px.set_drivePower(-20);
+        printf("Driving Backwards\n");
+        px.set_drivePower(-power);
         sleep(1);
     }
 }
