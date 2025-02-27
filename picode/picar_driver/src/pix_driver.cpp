@@ -57,8 +57,8 @@ PiX::PiX(void){
     this->gpio_lib_init();
     this->gpio_init(pin_driveDir[0], true);
     this->gpio_init(pin_driveDir[1], true);
-    this->gpio_init(pin_ultrasonic_trig, true);   // TRIG as OUTPUT
-    this->gpio_init(pin_ultrasonic_echo, false);  // ECHO as INPUT
+    // this->gpio_init(pin_ultrasonic_trig, true);   // TRIG as OUTPUT
+    // this->gpio_init(pin_ultrasonic_echo, false);  // ECHO as INPUT
 
 }
 

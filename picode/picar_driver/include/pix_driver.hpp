@@ -11,7 +11,7 @@
 #define _PIX_DRIVER_H_
 
 // Uncomment to replace the Raspberry Pi GPIO Library with Null Functions
-#define TEST
+// #define TEST
 
 #include <stdint.h>
 #ifndef TEST
@@ -19,6 +19,8 @@
 #endif
 #include <cmath>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 class PiX {
     public:
