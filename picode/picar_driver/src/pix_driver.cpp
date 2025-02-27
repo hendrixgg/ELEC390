@@ -77,6 +77,7 @@ PiX::~PiX(){
 }
 
 void PiX::set_turnAngle(float angle){
+    this->turn_angle = angle;
     angle += this->turn_offset;
     uint32_t pwm = turn_min_pwm + ((angle + turn_max_deg) * (turn_max_pwm - turn_min_pwm)) / (2 * turn_max_deg);
     pwm = pwm > turn_max_pwm ? turn_max_pwm : pwm;
@@ -120,6 +121,11 @@ float PiX::get_liftAngle(void){
 }
 
 void PiX::set_cameraTilt(float angle){
+    this->camera_tilt = angle;
+    uint32_t pwm = cam_min_pwm + ((angle + cam_max_deg) * (cam_max_pwm - cam_min_pwm)) / (2 * cam_max_deg);
+    pwm = pwm > cam_max_pwm ? cam_max_pwm : pwm;
+    pwm = pwm < cam_min_pwm ? cam_min_pwm : pwm;
+    this->pwm_set_pulse_width(pin_camera[0], pwm);
 }
 
 float PiX::get_cameraTilt(void){
@@ -127,7 +133,11 @@ float PiX::get_cameraTilt(void){
 }
 
 void PiX::set_cameraPan(float angle){
-
+    this->camera_pan = angle;
+    uint32_t pwm = cam_min_pwm + ((angle + cam_max_deg) * (cam_max_pwm - cam_min_pwm)) / (2 * cam_max_deg);
+    pwm = pwm > cam_max_pwm ? cam_max_pwm : pwm;
+    pwm = pwm < cam_min_pwm ? cam_min_pwm : pwm;
+    this->pwm_set_pulse_width(pin_camera[1], pwm);
 }
 
 float PiX::get_cameraPan(void){
