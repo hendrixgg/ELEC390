@@ -48,7 +48,7 @@ PiX::PiX(void){
     this->camera_pan = 0;
 
     // Setup PWM
-    this->setup_pwm(50);
+    this->pwm_set_frequency(0, 50);
     // Setup Drive Direction Pins
     this->gpio_lib_init();
     this->gpio_init(pin_driveDir[0], true);
@@ -73,8 +73,8 @@ PiX::~PiX(){
 }
 
 void PiX::set_turnAngle(float angle){
-    uint32_t pwm = this->deg_to_pwm(angle, 30);
-    this->set_pwm(pin_turn, pwm);
+    // uint32_t pwm = this->deg_to_pwm(angle, 30);
+    this->pwm_set_pulse_width(pin_turn, angle*2500/100);
 }
 
 void PiX::set_turnOffset(float offset_angle){}
@@ -93,8 +93,8 @@ void PiX::set_drivePower(int power){
         gpio_write(pin_driveDir[1], false);
         power = -power;
     }
-    this->i2c_write(PiX::pwm_base + pin_drivePow[0], (int)((power/100.0)*65535));
-    this->i2c_write(PiX::pwm_base + pin_drivePow[1], (int)((power/100.0)*65535));
+    this->i2c_write(PiX::REG_CHN + pin_drivePow[0], (int)((power/100.0)*65535));
+    this->i2c_write(PiX::REG_CHN + pin_drivePow[1], (int)((power/100.0)*65535));
 }
 
 int PiX::get_drivePower(void){
@@ -143,24 +143,6 @@ float PiX::adc_to_volt(uint32_t adc_reading){
     return adc_reading*3.3/4095;
 }
 
-void PiX::setup_pwm(float freq){
-    int psc, arr;
-    double best_error = 1e9;
-    
-    for (int p = 1; p < 256; p++) {
-        int a = (int)(PiX::pwm_clk/ (freq * p));
-        double error = fabs(freq - (PiX::pwm_clk/ (p * a)));
-        if (error < best_error) {
-            best_error = error;
-            psc = p;
-            arr = a;
-        }
-    }
-
-    i2c_write(PiX::pwm_psc, psc - 1);
-    i2c_write(PiX::pwm_arr, arr);
-}
-
 int PiX::i2c_read(int reg){
     unsigned char buffer[2];
     if (write(i2c_fd, &reg, 1) != 1) {
@@ -186,8 +168,61 @@ int PiX::i2c_write(int reg, int value){
     return 0;
 }
 
-int PiX::set_pwm(int pin, uint16_t val){
-    return this->i2c_write(PiX::pwm_base + pin, val);
+void PiX::pwm_set_frequency(int channel, float freq) {
+    if (channel < 0 || channel > 19) {
+        return;
+    }
+
+    int timer_index;
+    if (channel < 16)
+        timer_index = channel / 4;
+    else if (channel == 16 || channel == 17)
+        timer_index = 4;
+    else if (channel == 18)
+        timer_index = 5;
+    else
+        timer_index = 6;
+
+    int best_psc = 1, best_arr = 1;
+    float min_error = CLOCK;
+    int start = std::max(1, static_cast<int>(std::sqrt(CLOCK / freq)) - 5);
+
+    for (int psc = start; psc < start + 10; ++psc) {
+        int arr = static_cast<int>(CLOCK / (freq * psc));
+        float error = std::abs(freq - CLOCK / (psc * arr));
+        if (error < min_error) {
+            min_error = error;
+            best_psc = psc;
+            best_arr = arr;
+        }
+    }
+
+    pwm_set_prescaler(timer_index, best_psc);
+    pwm_set_period(timer_index, best_arr);
+}
+
+void PiX::pwm_set_prescaler(int timer_index, int prescaler) {
+    if (timer_index < 0 || timer_index >= 7) return;
+
+    int reg = (timer_index < 4) ? (REG_PSC + timer_index) : (REG_PSC2 + timer_index - 4);
+    i2c_write(reg, prescaler - 1);
+}
+
+void PiX::pwm_set_period(int timer_index, int period) {
+    if (timer_index < 0 || timer_index >= 7) return;
+
+    timer_arr[timer_index] = period;
+    int reg = (timer_index < 4) ? (REG_ARR + timer_index) : (REG_ARR2 + timer_index - 4);
+    i2c_write(reg, period);
+}
+
+void PiX::pwm_set_pulse_width(int channel, int pulse_width) {
+    if (channel < 0 || channel > 19) {
+        return;
+    }
+
+    int reg = REG_CHN + channel;
+    i2c_write(reg, pulse_width);
 }
 
 #ifndef TEST

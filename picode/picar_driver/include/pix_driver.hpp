@@ -17,6 +17,8 @@
 #ifndef TEST
 #include <gpiod.h>
 #endif
+#include <cmath>
+#include <iostream>
 
 class PiX {
     public:
@@ -147,7 +149,11 @@ class PiX {
         int i2c_fd;
         int i2c_read(int reg);
         int i2c_write(int reg, int value);
-        int set_pwm(int channel, uint16_t val);
+        void pwm_set_frequency(int channel, float freq);
+        void pwm_set_prescaler(int timer_index, int prescaler);
+        void pwm_set_period(int timer_index, int period);
+        void pwm_set_pulse_width(int channel, int pulse_width);
+        int timer_arr[7] = {1, 1, 1, 1, 1, 1, 1};  // Stores period for each timer
 
         // GPIO Interface Functions
         int gpio_lib_init(void);
@@ -156,12 +162,12 @@ class PiX {
 
         // I2C Device Information
         constexpr static int i2c_addr = 0x14;
-        constexpr static int pwm_base = 0x20;
-        constexpr static int pwm_psc  = 0x40;
-        constexpr static int pwm_arr  = 0x44;
-        constexpr static int pwm_psc2 = 0x50;
-        constexpr static int pwm_arr2 = 0x54;
-        constexpr static float pwm_clk  = 72000000.0;
+        static constexpr float CLOCK = 72000000.0;  // 72 MHz clock
+        static constexpr int REG_CHN = 0x20;
+        static constexpr int REG_PSC = 0x40;
+        static constexpr int REG_ARR = 0x44;
+        static constexpr int REG_PSC2 = 0x50;
+        static constexpr int REG_ARR2 = 0x54;
         constexpr static int adc_base = 0x10;
 
         // Constants used when interfacing with the PiX Hat
