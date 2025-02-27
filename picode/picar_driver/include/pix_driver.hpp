@@ -11,7 +11,7 @@
 #define _PIX_DRIVER_H_
 
 // Uncomment to replace the Raspberry Pi GPIO Library with Null Functions
-// #define TEST
+#define TEST
 
 #include <stdint.h>
 #ifndef TEST
@@ -116,12 +116,7 @@ class PiX {
          */
         float get_lineAverage(void);
 
-        /**
-         * @brief Get the line sensors deviation from the center
-         *
-         * @return negative value for left deviation, positive for right
-         */
-        float get_lineDeviation(void);
+        float get_lineSensor(int sensor);
 
     private:
         // Internal References
@@ -179,7 +174,9 @@ class PiX {
         // Hat Pins
         constexpr static int pin_drivePow[2] = {13, 12};
         constexpr static int pin_turn = 0;
-        constexpr static int pin_ultrasonic[2] = {2, 3};
+        // Trigger / Echo Pins
+        constexpr static int pin_ultrasonic_trig = 2;
+        constexpr static int pin_ultrasonic_echo = 3;
         constexpr static int pin_lift[2] = {4, 5};
         constexpr static int pin_camera[2] = {1, 2};
 

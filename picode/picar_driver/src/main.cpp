@@ -19,6 +19,9 @@ int main(int argc, char **argv){
     int power = 100;
     printf("Turning.. 0\n");
     px.set_turnOffset(4);
+    for(;;){
+        printf("Ultrasonic Distance: %0.2f", px.get_distance());
+    }
     // px.set_turnAngle(5);
     sleep(1);
     for(int i = 0; i < 200; i += 20){

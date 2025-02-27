@@ -57,6 +57,9 @@ PiX::PiX(void){
     this->gpio_lib_init();
     this->gpio_init(pin_driveDir[0], true);
     this->gpio_init(pin_driveDir[1], true);
+    this->gpio_init(pin_ultrasonic_trig, true);   // TRIG as OUTPUT
+    this->gpio_init(pin_ultrasonic_echo, false);  // ECHO as INPUT
+
 }
 
 PiX::~PiX(){
@@ -151,16 +154,62 @@ float PiX::get_cameraPan(void){
     return this->camera_pan;
 }
 
-float PiX::get_distance(void){
-    return 0.0;
+#ifdef TEST
+float PiX::get_distance(void) {return 0.0;}
+#endif
+#ifndef TEST
+float PiX::get_distance(void) {
+    const float SOUND_SPEED = 343.3;  // Speed of sound in m/s
+    const float TIMEOUT = 0.02;       // Timeout in seconds
+
+    // Ensure GPIOs are initialized
+    if (!this->gpio_chip) {
+        std::cerr << "Error: GPIO chip not initialized. Call gpio_lib_init() first.\n";
+        return -1;
+    }
+
+    // Send trigger pulse
+    gpio_write(pin_ultrasonic_trig, false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    gpio_write(pin_ultrasonic_trig, true);
+    std::this_thread::sleep_for(std::chrono::microseconds(10));
+    gpio_write(pin_ultrasonic_trig, false);
+
+    // Measure pulse duration
+    auto timeout_start = std::chrono::steady_clock::now();
+    auto pulse_start = timeout_start;
+    auto pulse_end = timeout_start;
+
+    // Wait for echo to go HIGH
+    while (gpiod_line_get_value(this->gpio_lines[pin_ultrasonic_echo]) == 0) {
+        pulse_start = std::chrono::steady_clock::now();
+        if (std::chrono::duration<float>(pulse_start - timeout_start).count() > TIMEOUT)
+            return -1;  // Timeout error
+    }
+
+    // Wait for echo to go LOW
+    while (gpiod_line_get_value(this->gpio_lines[pin_ultrasonic_echo]) == 1) {
+        pulse_end = std::chrono::steady_clock::now();
+        if (std::chrono::duration<float>(pulse_end - timeout_start).count() > TIMEOUT)
+            return -1;  // Timeout error
+    }
+
+    float duration = std::chrono::duration<float>(pulse_end - pulse_start).count();
+    float distance_cm = (duration * SOUND_SPEED / 2) * 100;  // Convert to cm
+
+    return distance_cm;
 }
+#endif
+
 
 float PiX::get_lineAverage(void){
     return 0.0;
 }
 
-float PiX::get_lineDeviation(void){
-    return 0.0;
+float PiX::get_lineSensor(int sensor){
+    if(sensor < 0 || sensor > 2) return 0.0;
+    int adc_reading = i2c_read(adc_base | pin_lineFollow[sensor]);
+    return adc_to_volt(adc_reading);
 }
 
 float PiX::adc_to_volt(uint32_t adc_reading){
@@ -298,20 +347,24 @@ int PiX::gpio_init(int pin, bool output) {
 }
 
 int PiX::gpio_write(int pin, bool value) {
-    struct gpiod_line* line = gpiod_chip_get_line(this->gpio_chip, pin);
-    if (!line) {
-        perror("Failed to get GPIO line for writing");
+    if (!this->gpio_chip) {
+        std::cerr << "Error: GPIO chip not initialized.\n";
         return -1;
     }
 
-    if (gpiod_line_set_value(line, value) < 0) {
+    if (!this->gpio_lines[pin]) {
+        std::cerr << "Error: GPIO line not initialized for pin " << pin << ".\n";
+        return -1;
+    }
+
+    if (gpiod_line_set_value(this->gpio_lines[pin], value) < 0) {
         perror("Failed to set GPIO value");
-        printf("on GPIO %d", pin);
         return -1;
     }
 
     return 0;
 }
+
 #endif
 
 #ifdef TEST
