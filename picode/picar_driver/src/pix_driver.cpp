@@ -187,7 +187,7 @@ int PiX::i2c_write(int reg, int value){
 }
 
 int PiX::set_pwm(int pin, uint16_t val){
-    this->i2c_write(PiX::pwm_base + pin, val);
+    return this->i2c_write(PiX::pwm_base + pin, val);
 }
 
 #ifndef TEST

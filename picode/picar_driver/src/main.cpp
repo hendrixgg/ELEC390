@@ -17,12 +17,18 @@ int main(int argc, char **argv){
     printf("Hello World\n");
     PiX px = PiX();
     int power = 100;
-    for(int i = 0; i < 2; i++){
-        printf("Driving Forwards\n");
-        px.set_drivePower(power);
-        sleep(1);
-        printf("Driving Backwards\n");
-        px.set_drivePower(-power);
-        sleep(1);
-    }
+    printf("Turning..\n");
+    px.set_turnAngle(30);
+    sleep(1);
+    px.set_turnAngle(-30);
+    sleep(1);
+    px.set_turnAngle(0);
+    // for(int i = 0; i < 2; i++){
+    //     printf("Driving Forwards\n");
+    //     px.set_drivePower(power);
+    //     sleep(1);
+    //     printf("Driving Backwards\n");
+    //     px.set_drivePower(-power);
+    //     sleep(1);
+    // }
 }
