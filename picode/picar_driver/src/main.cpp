@@ -24,6 +24,8 @@ int main(int argc, char **argv){
     for(int i = -30; i < 35; i+=5){
         printf("Turning... %d deg\n", i);
         px.set_turnAngle(i);
+        px.set_cameraPan(i);
+        px.set_cameraTilt(i);
         sleep(1);
     }
     px.set_turnAngle(0);
