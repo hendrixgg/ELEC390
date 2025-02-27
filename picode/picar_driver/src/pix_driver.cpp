@@ -114,6 +114,11 @@ int PiX::get_drivePower(void){
 }
 
 void PiX::set_liftAngle(float angle){
+    this->lift_angle = angle;
+    uint32_t pwm = lift_min_pwm + lift_max_pwm*angle/lift_max_deg;
+    pwm = pwm > lift_max_pwm ? lift_max_pwm : pwm;
+    pwm = pwm < lift_min_pwm ? lift_min_pwm : pwm;
+    this->pwm_set_pulse_width(pin_lift[0], pwm);
 }
 
 float PiX::get_liftAngle(void){

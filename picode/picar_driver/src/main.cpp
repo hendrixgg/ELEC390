@@ -20,14 +20,19 @@ int main(int argc, char **argv){
     printf("Turning.. 0\n");
     px.set_turnOffset(4);
     // px.set_turnAngle(5);
-    sleep(2);
-    for(int i = -30; i < 35; i+=5){
-        printf("Turning... %d deg\n", i);
-        px.set_turnAngle(i);
-        px.set_cameraPan(i);
-        px.set_cameraTilt(i);
+    sleep(1);
+    for(int i = 0; i < 180; i += 20){
+        printf("Lifting... %d deg\n", i);
+        px.set_liftAngle(i);
         sleep(1);
     }
+    // for(int i = -30; i < 35; i+=5){
+    //     printf("Turning... %d deg\n", i);
+    //     px.set_turnAngle(i);
+    //     px.set_cameraPan(i);
+    //     px.set_cameraTilt(i);
+    //     sleep(1);
+    // }
     px.set_turnAngle(0);
     // for(int i = 0; i < 2; i++){
     //     printf("Driving Forwards\n");
