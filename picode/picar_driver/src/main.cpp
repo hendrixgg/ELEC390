@@ -21,7 +21,7 @@ int main(int argc, char **argv){
     px.set_turnOffset(4);
     // px.set_turnAngle(5);
     sleep(1);
-    for(int i = 0; i < 180; i += 20){
+    for(int i = 0; i < 200; i += 20){
         printf("Lifting... %d deg\n", i);
         px.set_liftAngle(i);
         sleep(1);

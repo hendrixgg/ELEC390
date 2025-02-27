@@ -11,7 +11,7 @@
 #define _PIX_DRIVER_H_
 
 // Uncomment to replace the Raspberry Pi GPIO Library with Null Functions
-#define TEST
+// #define TEST
 
 #include <stdint.h>
 #ifndef TEST
@@ -180,7 +180,7 @@ class PiX {
         constexpr static int pin_drivePow[2] = {13, 12};
         constexpr static int pin_turn = 0;
         constexpr static int pin_ultrasonic[2] = {2, 3};
-        constexpr static int pin_lift[2] = {3, 4};
+        constexpr static int pin_lift[2] = {4, 5};
         constexpr static int pin_camera[2] = {1, 2};
 
         // Device Constants
@@ -193,8 +193,8 @@ class PiX {
         constexpr static uint32_t cam_max_pwm = 105;
 
         constexpr static float lift_max_deg = 180;
-        constexpr static uint32_t lift_min_pwm = 60;
-        constexpr static uint32_t lift_max_pwm = 1500;
+        constexpr static uint32_t lift_min_pwm = 26;
+        constexpr static uint32_t lift_max_pwm = 135;
 };
 
 #endif
