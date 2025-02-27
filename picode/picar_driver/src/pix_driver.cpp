@@ -50,7 +50,9 @@ PiX::PiX(void){
     // Setup PWM
     this->pwm_set_frequency(pin_drivePow[0], 50);
     this->pwm_set_frequency(pin_drivePow[1], 50);
-    // this->pwm_set_frequency(pin_turn, 50);
+    // Setup Servo PWM
+    for(int i = 0; i < 7; i++)
+        this->pwm_set_frequency(i, 50);
     // Setup Drive Direction Pins
     this->gpio_lib_init();
     this->gpio_init(pin_driveDir[0], true);
@@ -75,11 +77,16 @@ PiX::~PiX(){
 }
 
 void PiX::set_turnAngle(float angle){
-    // uint32_t pwm = this->deg_to_pwm(angle, 30);
-    this->pwm_set_pulse_width(pin_turn, angle*2500/100);
+    angle += this->turn_offset;
+    uint32_t pwm = this->deg_to_pwm(angle, 30);
+    this->pwm_set_pulse_width(pin_turn, pwm);
 }
 
-void PiX::set_turnOffset(float offset_angle){}
+void PiX::set_turnOffset(float offset_angle){
+    this->turn_offset = offset_angle;
+    // Apply offset
+    this->set_turnAngle(this->turn_angle);
+}
 
 float PiX::get_turnAngle(void){
     return this->turn_angle;
@@ -138,7 +145,7 @@ float PiX::get_lineDeviation(void){
 }
 
 uint32_t PiX::deg_to_pwm(float deg, float max_deg){
-    return (uint32_t)((max_deg/2 + deg)*PiX::pwm_max/max_deg);
+    return (uint32_t)((max_deg/2 + deg)*1499/max_deg) + 1;
 }
 
 float PiX::adc_to_volt(uint32_t adc_reading){
