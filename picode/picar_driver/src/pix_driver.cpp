@@ -48,7 +48,9 @@ PiX::PiX(void){
     this->camera_pan = 0;
 
     // Setup PWM
-    this->pwm_set_frequency(0, 50);
+    this->pwm_set_frequency(pin_drivePow[0], 50);
+    this->pwm_set_frequency(pin_drivePow[1], 50);
+    // this->pwm_set_frequency(pin_turn, 50);
     // Setup Drive Direction Pins
     this->gpio_lib_init();
     this->gpio_init(pin_driveDir[0], true);
