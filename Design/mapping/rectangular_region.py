@@ -1,4 +1,5 @@
 from typing import Tuple, NamedTuple
+from math import sqrt
 
 
 class RectangularRegion(Tuple[Tuple[float, float], Tuple[float, float]]):
@@ -15,7 +16,7 @@ class RectangularRegion(Tuple[Tuple[float, float], Tuple[float, float]]):
             raise ValueError(f"Invalid x range: {x}, must have x[0] <= x[1]")
         if not y[0] <= y[1]:
             raise ValueError(f"Invalid y range: {y}, must have y[0] <= y[1]")
-        return super().__new__(cls, (x, y))
+        return super().__new__(cls, ((float(x[0]), float(x[1])), (float(y[0]), float(y[1]))))
 
     @property
     def x(self) -> Tuple[float, float]:
@@ -27,14 +28,6 @@ class RectangularRegion(Tuple[Tuple[float, float], Tuple[float, float]]):
 
     def __repr__(self) -> str:
         return f"RectangularRegion(x={self.x}, y={self.y})"
-
-
-# r = RectangularRegion((1, 2), (3, 4))
-# print(r)
-# print(RectangularRegion((1, 2), (3, 4)) ==
-#       RectangularRegion((1, 2), (3, 4)))  # True
-# print(RectangularRegion((0, 2), (3, 4)) ==
-#       RectangularRegion((1, 2), (3, 4)))  # False
 
 
 class Point2D(NamedTuple):
@@ -60,7 +53,7 @@ class DirectedSegment(NamedTuple):
         return f"DirectedSegment({self.src} -> {self.dest})"
 
 
-def in_region(region: Point2D, point: Point2D) -> bool:
+def in_region(region: RectangularRegion, point: Point2D) -> bool:
     """Return True if the point is within the region."""
     return region.x[0] <= point.x <= region.x[1] and region.y[0] <= point.y <= region.y[1]
 
@@ -72,4 +65,11 @@ def distance_squared(src: Point2D, dest: Point2D) -> float:
 
 def distance(src: Point2D, dest: Point2D) -> float:
     """Return the Euclidean distance between two points."""
-    return distance_squared(src, dest)**0.5
+    return sqrt(distance_squared(src, dest))
+
+# r = RectangularRegion((1, 2), (3, 4))
+# print(r)
+# print(RectangularRegion((1, 2), (3, 4)) ==
+#       RectangularRegion((1, 2), (3, 4)))  # True
+# print(RectangularRegion((0, 2), (3, 4)) ==
+#       RectangularRegion((1, 2), (3, 4)))  # False

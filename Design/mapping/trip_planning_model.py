@@ -46,8 +46,10 @@ def argmin(iterable: Sequence, key: Callable[[Any], Any] = None):
     return min(range(len(iterable)), key=lambda i: key(iterable[i]))
 
 
-def tripRequestToActualTrip(map: AdjListMap, request: TripRequest) -> ActualTrip:
+def tripRequestToActual(map: AdjListMap, request: TripRequest) -> ActualTrip:
     """Return the ActualTrip that is as close to the request as possible on the map.
+
+    Time Complexity: O(n) where n is the number of nodes in the map. This could be optimized to O(log n) if the nodes are stored in a sorted order that allows for binary search across one coordinate, then the other.
 
     This will fail if `len(map.nodes)==0` (map has no nodes). Because on a map with no nodes, no TripActual is possible."""
     # If the request is already in the map, no need to change the locations.
@@ -117,9 +119,9 @@ class TripRoute(Tuple[ActualTrip, Tuple[EdgeId, ...]]):
 
 
 TripRouter = Callable[[ActualTrip], TripRoute]
-
-# Ways to implement a TripRouter:
 """
+Ways to implement a TripRouter:
+
 Single-source shortest path algorithms
 - Dijkstra's algorithm
 - A* search
@@ -151,7 +153,7 @@ class TripPlan(Tuple[AdjListMap, TripRequest, Tuple[NodeId, NodeId], Tuple[EdgeI
         return super().__new__(cls, (map, tuple(request), tuple(actual), tuple(route)))
 
     @classmethod
-    def from_trip_request(cls, map: AdjListMap, request: TripRequest, create_route: TripRouter, requestToActual: Callable[[AdjListMap, TripRequest], ActualTrip] = tripRequestToActualTrip) -> 'TripPlan':
+    def from_trip_request(cls, map: AdjListMap, request: TripRequest, create_route: TripRouter, requestToActual: Callable[[AdjListMap, TripRequest], ActualTrip] = tripRequestToActual) -> 'TripPlan':
         actual: ActualTrip = requestToActual(map, request)
         route: TripRoute = create_route(actual)
         return cls(map, request, (actual.src_id, actual.dest_id), tuple(route.route))
@@ -199,7 +201,7 @@ if __name__ == "__main__":
     map = AdjListMap(raw_map)
     # invalid request
     try:
-        trip = tripRequestToActualTrip(
+        trip = tripRequestToActual(
             map, TripRequest(Node(0, 0), Node(0, 1)))
         print(trip)
     except ValueError as _:
