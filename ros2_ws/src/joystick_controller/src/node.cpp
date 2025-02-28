@@ -20,18 +20,18 @@ private:
     void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
     {
         // Steering: Left joystick X-axis (-30 to 30)
-        publish_value(pub_turn_, msg->axes[0] * 30.0f);
+        publish_value(pub_turn_, msg->axes[0] * -30.0f);
 
         // Drive: Right trigger moves forward (0 to 100), left trigger moves backward (-100 to 0)
-        float throttle = (msg->axes[5] + 1.0f) / 2.0f * 100.0f; // Convert from [-1,1] to [0,100]
-        float brake = (msg->axes[4] + 1.0f) / 2.0f * 100.0f;    // Convert from [-1,1] to [0,100]
+        float throttle = abs(msg->axes[5] - 1.0f) / 2.0f * 100.0f; // Convert from [-1,1] to [0,100]
+        float brake = abs(msg->axes[2] - 1.0f) / 2.0f * 100.0f;    // Convert from [-1,1] to [0,100]
         publish_value(pub_drive_, throttle - brake);
 
         // Tilt: Right joystick Y-axis (-30 to 30)
         publish_value(pub_tilt_, msg->axes[3] * 30.0f);
 
         // Pan: Right joystick X-axis (-30 to 30)
-        publish_value(pub_pan_, msg->axes[2] * 30.0f);
+        publish_value(pub_pan_, msg->axes[4] * -30.0f);
     }
 
     void publish_value(rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr pub, float value)
