@@ -85,9 +85,9 @@ void PixNode::timer_callback() {
         auto msg = std_msgs::msg::Float32();
         msg.data = distance;
         pub_distance->publish(msg);
-        RCLCPP_INFO(this->get_logger(), "Published Distance: %.2f cm", distance);
+        // RCLCPP_INFO(this->get_logger(), "Published Distance: %.2f cm", distance);
     } else {
-        RCLCPP_WARN(this->get_logger(), "Invalid distance reading");
+        // RCLCPP_WARN(this->get_logger(), "Invalid distance reading");
     }
 }
 

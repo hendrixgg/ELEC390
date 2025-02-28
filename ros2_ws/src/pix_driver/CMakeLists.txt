@@ -39,7 +39,7 @@ include_directories(
 
 # target_include_directories(pix_node include)
 target_link_libraries(pix_node
-    # gpiod
+    gpiod
 )
 
 ament_target_dependencies(pix_node rclcpp std_msgs)
