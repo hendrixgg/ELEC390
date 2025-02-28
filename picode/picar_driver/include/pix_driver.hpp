@@ -177,8 +177,8 @@ class PiX {
         constexpr static int pin_drivePow[2] = {13, 12};
         constexpr static int pin_turn = 0;
         // Trigger / Echo Pins
-        constexpr static int pin_ultrasonic_trig = 2;
-        constexpr static int pin_ultrasonic_echo = 3;
+        constexpr static int pin_ultrasonic_trig = 27;
+        constexpr static int pin_ultrasonic_echo = 22;
         constexpr static int pin_lift[2] = {4, 5};
         constexpr static int pin_camera[2] = {1, 2};
 

@@ -57,8 +57,8 @@ PiX::PiX(void){
     this->gpio_lib_init();
     this->gpio_init(pin_driveDir[0], true);
     this->gpio_init(pin_driveDir[1], true);
-    // this->gpio_init(pin_ultrasonic_trig, true);   // TRIG as OUTPUT
-    // this->gpio_init(pin_ultrasonic_echo, false);  // ECHO as INPUT
+    this->gpio_init(pin_ultrasonic_trig, true);   // TRIG as OUTPUT
+    this->gpio_init(pin_ultrasonic_echo, false);  // ECHO as INPUT
 
 }
 
@@ -203,12 +203,16 @@ float PiX::get_distance(void) {
 
 
 float PiX::get_lineAverage(void){
-    return 0.0;
+    float sum = get_lineSensor(0);
+    sum += get_lineSensor(1);
+    sum += get_lineSensor(2);
+    return sum/3;
 }
 
 float PiX::get_lineSensor(int sensor){
     if(sensor < 0 || sensor > 2) return 0.0;
-    int adc_reading = i2c_read(adc_base | pin_lineFollow[sensor]);
+    int reg = 7 - pin_lineFollow[sensor];
+    int adc_reading = i2c_read(reg | adc_base);
     return adc_to_volt(adc_reading);
 }
 
