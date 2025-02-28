@@ -7,6 +7,9 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(PkgConfig REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -22,5 +25,26 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+add_executable(pix_node 
+    src/node.cpp
+    src/pix_driver.cpp
+)
+
+include_directories(
+    include
+    /usr/include
+)
+# target_link_libraries(pix_node PRIVATE gpiod)
+
+# target_include_directories(pix_node include)
+target_link_libraries(pix_node
+    # gpiod
+)
+
+ament_target_dependencies(pix_node rclcpp std_msgs)
+
+install(TARGETS pix_node
+  DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
