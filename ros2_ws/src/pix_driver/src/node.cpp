@@ -54,27 +54,27 @@ PixNode::PixNode() : Node("pix_node"), px() {
 
 // Callback functions for movement commands
 void PixNode::turn_callback(const std_msgs::msg::Float32::SharedPtr msg) {
-    RCLCPP_INFO(this->get_logger(), "Setting turn angle to: %.2f", msg->data);
+    // RCLCPP_INFO(this->get_logger(), "Setting turn angle to: %.2f", msg->data);
     this->px.set_turnAngle(msg->data);
 }
 
 void PixNode::drive_callback(const std_msgs::msg::Float32::SharedPtr msg) {
-    RCLCPP_INFO(this->get_logger(), "Setting drive speed to: %.2f", msg->data);
+    // RCLCPP_INFO(this->get_logger(), "Setting drive speed to: %.2f", msg->data);
     this->px.set_drivePower(msg->data);
 }
 
 void PixNode::tilt_callback(const std_msgs::msg::Float32::SharedPtr msg) {
-    RCLCPP_INFO(this->get_logger(), "Setting tilt angle to: %.2f", msg->data);
+    // RCLCPP_INFO(this->get_logger(), "Setting tilt angle to: %.2f", msg->data);
     this->px.set_cameraTilt(msg->data);
 }
 
 void PixNode::pan_callback(const std_msgs::msg::Float32::SharedPtr msg) {
-    RCLCPP_INFO(this->get_logger(), "Setting pan angle to: %.2f", msg->data);
+    // RCLCPP_INFO(this->get_logger(), "Setting pan angle to: %.2f", msg->data);
     this->px.set_cameraPan(msg->data);
 }
 
 void PixNode::lift_callback(const std_msgs::msg::Float32::SharedPtr msg) {
-    RCLCPP_INFO(this->get_logger(), "Setting lift height to: %.2f", msg->data);
+    // RCLCPP_INFO(this->get_logger(), "Setting lift height to: %.2f", msg->data);
     this->px.set_liftAngle(msg->data);
 }
 
