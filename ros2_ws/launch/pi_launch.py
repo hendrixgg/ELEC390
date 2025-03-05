@@ -12,7 +12,8 @@ def generate_launch_description():
         Node(
             package='pix_driver',
             executable='pix_node',
-            name='pix_control'
+            name='pix_control',
+            parameters=[{"turn_offset": 1.0, "diff_ratio": 0.65}]
         ),
     ])
 

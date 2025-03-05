@@ -14,12 +14,26 @@
 
 PixNode::PixNode() : Node("pix_node"), px() {
     RCLCPP_INFO(this->get_logger(), "PiX Node Initialized");
+    // Setup ROS Launch parameters
+    this->declare_parameter("turn_offset", 0.0);
+    this->declare_parameter("diff_ratio", 0.30);
+
+    // Load ROS parameters
+    diff_ratio = this->get_parameter("diff_ratio").as_double();
+    if(diff_ratio > 1) diff_ratio = 1;
+    if(diff_ratio < 0) diff_ratio = 0;
+
+    float turn_offset = this->get_parameter("turn_offset").as_double();
+    px.set_turnOffset(turn_offset);
 
     // Timer to periodically publish sensor data
     timer = this->create_wall_timer(
                 std::chrono::milliseconds(50),
                 std::bind(&PixNode::timer_callback, this)
             );
+
+    RCLCPP_INFO(this->get_logger(), "PiX Turn Offset = %0.2f deg", turn_offset);
+    RCLCPP_INFO(this->get_logger(), "PiX Differential Ratio = %0.2f %%", diff_ratio);
 
     // Subscribers for various commands
     sub_turn = this->create_subscription<std_msgs::msg::Float32>(
@@ -67,11 +81,11 @@ void PixNode::drive_callback(const std_msgs::msg::Float32::SharedPtr msg) {
     float turn_angle = this->px.get_turnAngle();
     // Slow right wheel on right turn
     if(turn_angle > 0){
-        right_power = 0.85*right_power*(30-turn_angle)/30 + 0.15*right_power;
+        right_power = diff_ratio*right_power*(30-turn_angle)/30 + (1-diff_ratio)*right_power;
     }
     if(turn_angle < 0){
         turn_angle = -turn_angle;
-        left_power = 0.85*left_power*(30-turn_angle)/30 + 0.15*left_power;
+        left_power = diff_ratio*left_power*(30-turn_angle)/30 + (1-diff_ratio)*left_power;
     }
     this->px.set_drivePower(left_power, right_power);
 }

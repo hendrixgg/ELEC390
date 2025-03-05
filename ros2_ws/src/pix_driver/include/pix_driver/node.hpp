@@ -33,6 +33,7 @@ class PixNode : public rclcpp::Node {
         rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr pub_distance;
         rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr pub_line;
         rclcpp::TimerBase::SharedPtr timer;
+        float diff_ratio;
 };
 
 #endif
