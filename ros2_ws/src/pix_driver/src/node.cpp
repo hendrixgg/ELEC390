@@ -50,6 +50,9 @@ PixNode::PixNode() : Node("pix_node"), px() {
     // Publisher for ultrasonic distance
     pub_distance = this->create_publisher<std_msgs::msg::Float32>(
                 "pix_distance", 10);
+    // Publisher for line sensor
+    pub_line = this->create_publisher<std_msgs::msg::Float32>(
+                "pix_line", 10);
 }
 
 // Callback functions for movement commands
@@ -91,14 +94,11 @@ void PixNode::lift_callback(const std_msgs::msg::Float32::SharedPtr msg) {
 // Timer function to publish sensor data (e.g., ultrasonic distance)
 void PixNode::timer_callback() {
     float distance = this->px.get_distance();
-    if (distance >= 0) { // Ensure valid distance
-        auto msg = std_msgs::msg::Float32();
-        msg.data = distance;
-        pub_distance->publish(msg);
-        // RCLCPP_INFO(this->get_logger(), "Published Distance: %.2f cm", distance);
-    } else {
-        // RCLCPP_WARN(this->get_logger(), "Invalid distance reading");
-    }
+    auto msg = std_msgs::msg::Float32();
+    msg.data = distance;
+    pub_distance->publish(msg);
+    msg.data = this->px.get_lineAverage();
+    pub_line->publish(msg);
 }
 
 // Main function to run the ROS 2 node

@@ -31,6 +31,7 @@ class PixNode : public rclcpp::Node {
                                                                 sub_pan,
                                                                 sub_lift;
         rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr pub_distance;
+        rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr pub_line;
         rclcpp::TimerBase::SharedPtr timer;
 };
 
