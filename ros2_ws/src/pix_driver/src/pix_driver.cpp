@@ -151,6 +151,7 @@ float PiX::get_liftAngle(void){
 }
 
 void PiX::set_cameraTilt(float angle){
+    angle += this->cam_off_deg;
     this->camera_tilt = angle;
     uint32_t pwm = cam_min_pwm + ((angle + cam_max_deg) * (cam_max_pwm - cam_min_pwm)) / (2 * cam_max_deg);
     pwm = pwm > cam_max_pwm ? cam_max_pwm : pwm;
@@ -163,6 +164,7 @@ float PiX::get_cameraTilt(void){
 }
 
 void PiX::set_cameraPan(float angle){
+    angle += this->cam_off_deg;
     this->camera_pan = angle;
     uint32_t pwm = cam_min_pwm + ((angle + cam_max_deg) * (cam_max_pwm - cam_min_pwm)) / (2 * cam_max_deg);
     pwm = pwm > cam_max_pwm ? cam_max_pwm : pwm;

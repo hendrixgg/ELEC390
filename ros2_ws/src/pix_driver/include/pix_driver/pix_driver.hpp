@@ -195,8 +195,9 @@ class PiX {
         constexpr static uint32_t turn_max_pwm = 105;
 
         constexpr static float cam_max_deg = 30;
-        constexpr static uint32_t cam_min_pwm = 0;
-        constexpr static uint32_t cam_max_pwm = 200;
+        constexpr static float cam_off_deg = -11.7;
+        constexpr static uint32_t cam_min_pwm = 35;
+        constexpr static uint32_t cam_max_pwm = 195;
 
         constexpr static float lift_max_deg = 180;
         constexpr static uint32_t lift_min_pwm = 26;
