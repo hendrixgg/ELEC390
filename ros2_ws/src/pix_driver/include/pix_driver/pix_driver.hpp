@@ -58,6 +58,13 @@ class PiX {
         void set_drivePower(int power);
 
         /**
+         * @brief Set the Drive Power
+         *
+         * @param power -100 to 100
+         */
+        void set_drivePower(int pow_left, int pow_right);
+
+        /**
          * @brief Get the current Drive Power
          *
          * @returns power -100 to 100
@@ -167,7 +174,7 @@ class PiX {
         constexpr static int adc_base = 0x10;
 
         // Constants used when interfacing with the PiX Hat
-        constexpr static int pwm_max = 4095;
+        constexpr static int drive_pwm_max = 2000;
 
         // Device Pin Mappings (Note: Some are digital, some are pwm, some are analog)
         constexpr static int pin_lineFollow[3] = {0, 1, 2};
@@ -188,8 +195,8 @@ class PiX {
         constexpr static uint32_t turn_max_pwm = 105;
 
         constexpr static float cam_max_deg = 30;
-        constexpr static uint32_t cam_min_pwm = 60;
-        constexpr static uint32_t cam_max_pwm = 105;
+        constexpr static uint32_t cam_min_pwm = 0;
+        constexpr static uint32_t cam_max_pwm = 200;
 
         constexpr static float lift_max_deg = 180;
         constexpr static uint32_t lift_min_pwm = 26;

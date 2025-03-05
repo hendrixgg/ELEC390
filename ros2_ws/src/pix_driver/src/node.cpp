@@ -60,7 +60,17 @@ void PixNode::turn_callback(const std_msgs::msg::Float32::SharedPtr msg) {
 
 void PixNode::drive_callback(const std_msgs::msg::Float32::SharedPtr msg) {
     // RCLCPP_INFO(this->get_logger(), "Setting drive speed to: %.2f", msg->data);
-    this->px.set_drivePower(msg->data);
+    float left_power = msg->data, right_power = msg->data;
+    float turn_angle = this->px.get_turnAngle();
+    // Slow right wheel on right turn
+    if(turn_angle > 0){
+        right_power = 0.85*right_power*(30-turn_angle)/30 + 0.15*right_power;
+    }
+    if(turn_angle < 0){
+        turn_angle = -turn_angle;
+        left_power = 0.85*left_power*(30-turn_angle)/30 + 0.15*left_power;
+    }
+    this->px.set_drivePower(left_power, right_power);
 }
 
 void PixNode::tilt_callback(const std_msgs::msg::Float32::SharedPtr msg) {

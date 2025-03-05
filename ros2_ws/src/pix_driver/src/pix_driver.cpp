@@ -108,8 +108,28 @@ void PiX::set_drivePower(int power){
         gpio_write(pin_driveDir[1], false);
         power = -power;
     }
-    this->i2c_write(PiX::REG_CHN + pin_drivePow[0], (int)((power/100.0)*4095));
-    this->i2c_write(PiX::REG_CHN + pin_drivePow[1], (int)((power/100.0)*4095));
+    this->i2c_write(PiX::REG_CHN + pin_drivePow[0], (int)((power/100.0)*2000));
+    this->i2c_write(PiX::REG_CHN + pin_drivePow[1], (int)((power/100.0)*2000));
+}
+
+void PiX::set_drivePower(int pow_left, int pow_right){
+    if(pow_left > 0){
+        gpio_write(pin_driveDir[0], false);
+    }
+    else{
+        gpio_write(pin_driveDir[0], true);
+        pow_left = -pow_left;
+    }
+
+    if(pow_right > 0){
+        gpio_write(pin_driveDir[1], true);
+    }
+    else{
+        gpio_write(pin_driveDir[1], false);
+        pow_right = -pow_right;
+    }
+    this->i2c_write(PiX::REG_CHN + pin_drivePow[0], (int)((pow_left/100.0)*drive_pwm_max));
+    this->i2c_write(PiX::REG_CHN + pin_drivePow[1], (int)((pow_right/100.0)*drive_pwm_max));
 }
 
 int PiX::get_drivePower(void){
