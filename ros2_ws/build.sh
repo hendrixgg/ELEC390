@@ -33,6 +33,7 @@ build() {
     fi
 }
 
+
 if [[ "$HOSTNAME" == "$HOSTNAME_JETSON" ]]; then
     echo "Building ROS Packages for Jetson"
     build "${PKGS_COMMON[@]}" "${PKGS_JETSON[@]}"
