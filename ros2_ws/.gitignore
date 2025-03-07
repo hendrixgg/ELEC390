@@ -2,3 +2,4 @@ install/*
 log/*
 build/*
 compile_commands.json
+.cache/*
