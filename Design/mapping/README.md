@@ -75,3 +75,6 @@ Functions:
 - `floyd_warshall_router.py`:
     - floyd_warshall_router: returns a min trip distance function and TripRouter for a particular AdjListMap. There are some ValueErrors that may be thrown when calling this function or any of its returned functions. 
     - reconstruct_path (not exported): this is used internally by the returned TripRouter.
+
+## Visualization
+![Quackston Map](ELEC390_Quackston_Matplotlib.png)
