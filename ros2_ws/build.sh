@@ -9,6 +9,7 @@ PKGS_RASBPI=("pix_driver")
 
 HOSTNAME_JETSON="jetson"
 HOSTNAME_RASBPI="team2pi"
+HOSTNAME=$(hostname)
 
 build() {
     if [[ $# -eq 0 ]]; then
@@ -16,8 +17,14 @@ build() {
         return 1
     fi
 
-    export CC=clang 
-    export CXX=clang++
+    if [[ "$HOSTNAME" == "$HOSTNAME_RASBPI" ]]; then
+        export CC=clang-15
+        export CXX=clang++-15
+    else
+        export CC=clang
+        export CXX=clang++
+    fi
+
 
     # Build the packages
     colcon build --packages-select "$@" --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
