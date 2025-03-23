@@ -12,6 +12,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float32.hpp"
+#include "std_msgs/msg/string.hpp"
 #include "sensor_msgs/msg/image.hpp"
 
 class Driver : public rclcpp::Node {
@@ -23,7 +24,8 @@ class Driver : public rclcpp::Node {
             eState_Blocked,
             eState_Waiting,
             eState_Turn_Right,
-            eState_Turn_Left
+            eState_Turn_Left,
+            eState_Turn_Straight
         };
         std::unordered_map<enum eState, std::string> stateString = {
             {eState_Driving, "Driving"},
@@ -31,17 +33,21 @@ class Driver : public rclcpp::Node {
             {eState_Waiting, "Waiting"},
             {eState_Turn_Right, "Turn Right"},
             {eState_Turn_Left, "Turn Left"},
+            {eState_Turn_Straight, "Going Straight"},
         };
     private:
         void change_state(enum eState state);
         void line_dev_callback(const std_msgs::msg::Float32::SharedPtr msg);
         void distance_callback(const std_msgs::msg::Float32::SharedPtr msg);
         void line_block_callback(const std_msgs::msg::Float32::SharedPtr msg);
+        void state_callback(const std_msgs::msg::String::SharedPtr msg);
         rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr line_dev_sub,
                                                                 distance_sub,
                                                                 line_sub;
         rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr drive_pow_pub,
                                                              turn_pub;
+        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub;
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr state_sub;
         rclcpp::TimerBase::SharedPtr timer;
         
         float error, error_last, error_sum;

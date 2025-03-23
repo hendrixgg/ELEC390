@@ -17,6 +17,9 @@ Driver::Driver() : Node("driver_node") {
             std::bind(&Driver::line_block_callback, this, std::placeholders::_1));
     this->drive_pow_pub = this->create_publisher<std_msgs::msg::Float32>("pix_drive", 10);
     this->turn_pub = this->create_publisher<std_msgs::msg::Float32>("pix_turn", 10);
+    this->state_pub = this->create_publisher<std_msgs::msg::String>("state/current", 10);
+    this->state_sub = this->create_subscription<std_msgs::msg::String>("state/next", 10,
+            std::bind(&Driver::state_callback, this, std::placeholders::_1));
     error = 0;
     error_last = 0;
     error_sum = 0;
@@ -78,10 +81,17 @@ void Driver::change_state(enum eState state){
             this->turn_pub->publish(turn_msg);
         case eState_Turn_Right:
             // Follow the line for right turns
-            drive_msg.data = turn_angle;
+            drive_msg.data = drive_pow;
             this->drive_pow_pub->publish(drive_msg);
-            turn_msg.data = drive_pow;
+            turn_msg.data = turn_angle;
             this->turn_pub->publish(turn_msg);
+        case eState_Turn_Straight:
+            // Follow the line for right turns
+            drive_msg.data = 40;
+            this->drive_pow_pub->publish(drive_msg);
+            turn_msg.data = 0;
+            this->turn_pub->publish(turn_msg);
+
     }
 }
 
@@ -107,4 +117,27 @@ void Driver::line_block_callback(const std_msgs::msg::Float32::SharedPtr msg){
         state = state_prev_d;
         state_prev_l = state;
     }
+}
+
+void Driver::state_callback(const std_msgs::msg::String::SharedPtr msg){
+    enum eState new_state;
+    if(stateString[eState_Driving] == msg->data){
+        new_state = eState_Driving;
+    }
+    if(stateString[eState_Blocked] == msg->data){
+        new_state = eState_Blocked;
+    }
+    if(stateString[eState_Waiting] == msg->data){
+        new_state = eState_Waiting;
+    }
+    if(stateString[eState_Turn_Right] == msg->data){
+        new_state = eState_Turn_Right;
+    }
+    if(stateString[eState_Turn_Left] == msg->data){
+        new_state = eState_Turn_Left;
+    }
+    if(stateString[eState_Turn_Straight] == msg->data){
+        new_state = eState_Turn_Straight;
+    }
+    this->change_state(new_state);
 }
