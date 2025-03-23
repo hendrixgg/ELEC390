@@ -27,6 +27,13 @@ LineTracker::LineTracker() : Node("line_tracker"){
     this->cam_tilt_pub = this->create_publisher<std_msgs::msg::Float32>("pix_tilt", 10);
     this->cam_pan_pub = this->create_publisher<std_msgs::msg::Float32>("pix_pan", 10);
     RCLCPP_INFO(this->get_logger(), "%s ONLINE", this->get_name());
+    // Set the camera angle on repeat
+    std_msgs::msg::Float32 tilt_msg;
+    tilt_msg.data = 28;
+    this->cam_tilt_pub->publish(tilt_msg);
+    std_msgs::msg::Float32 pan_msg;
+    pan_msg.data = -16;
+    this->cam_pan_pub->publish(pan_msg);
 }
 
 void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
@@ -43,7 +50,7 @@ void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
     }
     cv::Mat gray;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    cv::medianBlur(gray, gray, 7);
+    cv::medianBlur(gray, gray, 9);
 
     // Threshold the image
     cv::Mat thresholded;
@@ -51,24 +58,43 @@ void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
 
     cv::Mat cv_out;
     cv::cvtColor(thresholded, cv_out, cv::COLOR_GRAY2BGR);
-    
-    // Find the white line
-    std::vector<std::vector<cv::Point>> contours;
-    std::vector<cv::Vec4i> hierarchy;
-    cv::findContours(thresholded, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-    if(!contours.empty()){
-        cv::Rect bounding_box = cv::boundingRect(contours[0]);
-        int center_x = bounding_box.x + bounding_box.width/2;
-        int center_y = bounding_box.y + bounding_box.height/2;
-        std_msgs::msg::Float32 line_dev_msg;
-        line_dev_msg.data = center_y-(float)((float)msg->height/2.0);
-        this->line_dev_pub->publish(line_dev_msg);
 
-        // Draw on the image
-        cv::rectangle(cv_out, bounding_box, cv::Scalar(0, 255, 0), 2);
-        // Draw center point in red
-        cv::circle(cv_out, cv::Point(center_x, center_y), 5, cv::Scalar(0, 0, 255), -1);
+    // Compute image moments
+    cv::Moments moments = cv::moments(thresholded, true);
+    cv::Point center;
+
+    // Check if the moment is valid (avoid division by zero)
+    if (moments.m00 > 0) {
+        center.x = static_cast<int>(moments.m10 / moments.m00);
+        center.y = static_cast<int>(moments.m01 / moments.m00);
+
+        // Draw a dot at the centroid
+        cv::circle(cv_out, center, 5, cv::Scalar(0, 255, 255), -1);
     }
+
+    // Find the white line using HoughLinesP
+    std::vector<cv::Vec4i> lines;
+    cv::HoughLinesP(thresholded, lines, 1, CV_PI / 180, 50, 50, 10);
+    if (!lines.empty()) {
+        cv::Vec4i l = lines[0];  // Take the first detected line
+        int x_center = (l[0] + l[2]) / 2;
+        int y_center = (l[1] + l[3]) / 2;
+
+        // Draw the detected line
+        cv::line(cv_out, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0, 255, 0), 2);
+
+        // Blend Hough & Moments
+        cv::Point final_center = cv::Point((center.x + x_center) / 2, (center.y + y_center) / 2);
+
+        // Draw a dot at the final center
+        cv::circle(cv_out, final_center, 5, cv::Scalar(255, 0, 0), -1);
+
+        // Publish the deviation from the center of the image
+        std_msgs::msg::Float32 line_dev_msg;
+        line_dev_msg.data = final_center.y - static_cast<float>(msg->height) / 2.0;
+        this->line_dev_pub->publish(line_dev_msg);
+    }
+
 
     // Publish the result image for debugging
     cv_bridge::CvImage out_image = cv_bridge::CvImage();
@@ -76,6 +102,14 @@ void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
     out_image.encoding = sensor_msgs::image_encodings::BGR8;
     out_image.image = cv_out;
     this->image_pub->publish(*out_image.toImageMsg());
+
+    // Set the camera angle on repeat
+    std_msgs::msg::Float32 tilt_msg;
+    tilt_msg.data = -28;
+    this->cam_tilt_pub->publish(tilt_msg);
+    std_msgs::msg::Float32 pan_msg;
+    pan_msg.data = -16;
+    this->cam_pan_pub->publish(pan_msg);
 }
 
 
