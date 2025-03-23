@@ -1,8 +1,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/float32.hpp>
-#include <cv_bridge/cv_bridge.hpp>
+#include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
+#include "roadline_tracker/linetracker.hpp"
 
 class LineTrackerNode : public rclcpp::Node {
 public:
@@ -69,7 +70,7 @@ private:
 
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<LineTrackerNode>());
+    rclcpp::spin(std::make_shared<LineTracker>());
     rclcpp::shutdown();
     return 0;
 }

@@ -26,6 +26,7 @@ endif()
 
 add_executable(roadline_tracker
     src/main.cpp
+    src/linetracker.cpp
 )
 
 include_directories(
