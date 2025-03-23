@@ -92,6 +92,7 @@ void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
         // Publish the deviation from the center of the image
         std_msgs::msg::Float32 line_dev_msg;
         line_dev_msg.data = final_center.y - static_cast<float>(msg->height) / 2.0;
+        line_dev_msg.data -= final_center.x - static_cast<float>(msg->width) / 2.0;
         this->line_dev_pub->publish(line_dev_msg);
     }
 
