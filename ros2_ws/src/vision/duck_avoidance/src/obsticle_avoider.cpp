@@ -21,17 +21,14 @@ ObsticleAvoider::ObsticleAvoider() : Node("line_tracker"){
     std::string output_topic = this->get_parameter("output_topic").as_string();
     std::string output_image = this->get_parameter("image_output").as_string();
 
-    // Subscribe to topics (message_filters requires explicit initialization)
-    color_sub.subscribe(this, color_topic);
-    depth_sub.subscribe(this, depth_topic);
+     // Subscribe to color and depth images
+    this->color_sub = this->create_subscription<sensor_msgs::msg::Image>(
+        color_topic, 10,
+        std::bind(&ObsticleAvoider::color_callback, this, std::placeholders::_1));
 
-    // Create TimeSynchronizer
-    sync_ = std::make_shared<message_filters::Synchronizer<sync_policy>>(
-            sync_policy(1), color_sub, depth_sub);
-
-    // Register callback
-    sync_->registerCallback(std::bind(&ObsticleAvoider::cv_callback, this,
-                std::placeholders::_1, std::placeholders::_2));
+    this->depth_sub = this->create_subscription<sensor_msgs::msg::Image>(
+        depth_topic, 10,
+        std::bind(&ObsticleAvoider::depth_callback, this, std::placeholders::_1));
 
     // Publishers
     image_pub = this->create_publisher<sensor_msgs::msg::Image>(output_image, 10);
@@ -44,33 +41,62 @@ ObsticleAvoider::ObsticleAvoider() : Node("line_tracker"){
     this->min_distance_pub->publish(dist_msg);
 }
 
-void ObsticleAvoider::cv_callback(const sensor_msgs::msg::Image::ConstSharedPtr& color,
-        const sensor_msgs::msg::Image::ConstSharedPtr& depth){
-    // cv::Mat frame;
-    // try{
-    //     // Convert ROS2 Image message to OpenCV Mat (YUYV format)
-    //     cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(depth, "mono8"); // Load only Y channel
-    //
-    //     // Convert YUYV to BGR using OpenCV
-    //     cv::cvtColor(cv_ptr->image, frame, cv::COLOR_GRAY2BGR);
-    // }
-    // catch (const cv_bridge::Exception &e){
-    //     RCLCPP_ERROR(this->get_logger(), "Failure: %s", e.what());
-    // }
-    RCLCPP_INFO(this->get_logger(), "Hello");
-    // cv::Mat gray;
-    // cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    // cv::medianBlur(gray, gray, 9);
-    //
-    // // Publish the result image for debugging
-    // cv_bridge::CvImage out_image = cv_bridge::CvImage();
-    // out_image.header = color->header;
-    // out_image.encoding = sensor_msgs::image_encodings::BGR8;
-    // out_image.image = frame;
-    // this->image_pub->publish(*out_image.toImageMsg());
-    this->image_pub->publish(*color);
+void ObsticleAvoider::color_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg) {
+    try {
+        // Check if image encoding is correct
+        // RCLCPP_INFO(this->get_logger(), "Received image with encoding: %s", msg->encoding.c_str());
+
+        // Convert ROS2 Image message to OpenCV Mat
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "rgb8"); 
+
+        // Ensure the image is valid
+        if (cv_ptr->image.empty()) {
+            RCLCPP_ERROR(this->get_logger(), "Received empty image!");
+            return;
+        }
+
+        // Store the image
+        this->color = cv_ptr->image;
+    } 
+    catch (const cv_bridge::Exception &e) {
+        RCLCPP_ERROR(this->get_logger(), "cv_bridge exception: %s", e.what());
+        return;
+    }
+    catch (const std::exception &e) {
+        RCLCPP_ERROR(this->get_logger(), "Standard exception: %s", e.what());
+        return;
+    }
+
+    process_images();
 }
 
+void ObsticleAvoider::depth_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg){
+    try{
+        // Convert ROS2 Image message to OpenCV Mat (YUYV format)
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8"); // Load only Y channel
+
+        // Convert YUYV to BGR using OpenCV
+        cv::cvtColor(cv_ptr->image, this->depth, cv::COLOR_GRAY2BGR);
+    }
+    catch (const cv_bridge::Exception &e){
+        RCLCPP_ERROR(this->get_logger(), "Failure: %s", e.what());
+    }
+    process_images();
+}
+
+void ObsticleAvoider::process_images(){
+    if(color.empty() || depth.empty()) return;
+
+
+    // Publish the result image for debugging
+    cv_bridge::CvImage out_image = cv_bridge::CvImage();
+    std_msgs::msg::Header header;
+    header.stamp = this->now();
+    out_image.header = header;
+    out_image.encoding = sensor_msgs::image_encodings::RGB8;
+    out_image.image = color;
+    this->image_pub->publish(*out_image.toImageMsg());
+}
 
 
 

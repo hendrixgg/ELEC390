@@ -16,7 +16,7 @@ def generate_launch_description():
                 {"enable_accel": True},  # Disable IMU (accelerometer)
                 {"enable_sync": False},  # Sync depth and color frames
                 {"depth_module.depth_profile": "640x480x30"},
-                {"rgb_camera.color_profile": "1280x720x30"},
+                {"rgb_camera.color_profile": "640x480x30"},
                 {"depth_module.infra_profile": "640x480x30"},
                 ],
         ),
