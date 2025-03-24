@@ -33,10 +33,12 @@ def plot_map(map: RawMap):
         direction_x = dx / length
         direction_y = dy / length
         # Adjust the length to avoid the head extending beyond the edge
-        arrow_length = length - 0.1
+        arrow_head_length = length*0.05
+        arrow_head_width = length*0.025
+        arrow_length = length - arrow_head_length
 
         plt.arrow(src_node.x, src_node.y, direction_x * arrow_length, direction_y * arrow_length,
-                  head_width=0.05, head_length=0.1, fc='k', ec='k')
+                  head_width=arrow_head_width, head_length=arrow_head_length, fc='k', ec='k')
 
     # Add custom legend entry for edge lengths
     plt.plot([], [], 'r-', lw=1, label='Edge Length(meters)')
