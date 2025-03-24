@@ -28,7 +28,7 @@ def generate_launch_description():
                          }]
             ),
         Node(
-            package='roadline_tracker',
+            package='vision',
             executable='roadline_tracker',
             name='roadline_tracker',
             parameters=[{"image_topic": "/pix_camera/image_raw",

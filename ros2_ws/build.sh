@@ -3,7 +3,7 @@
 # This Script runs using ZSH!
 # It can be changed to bash by modifying the top line
 
-PKGS_COMMON=("roadline_tracker" "joystick_controller" "driver")
+PKGS_COMMON=("vision" "joystick_controller" "driver")
 PKGS_JETSON=()
 PKGS_RASBPI=("pix_driver")
 
