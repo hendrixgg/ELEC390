@@ -96,6 +96,8 @@ void ObsticleAvoider::process_images(){
     out_image.encoding = sensor_msgs::image_encodings::RGB8;
     out_image.image = color;
     this->image_pub->publish(*out_image.toImageMsg());
+    out_image.image = depth;
+    this->image_pub->publish(*out_image.toImageMsg());
 }
 
 
