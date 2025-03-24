@@ -87,6 +87,8 @@ void ObsticleAvoider::depth_callback(const sensor_msgs::msg::Image::ConstSharedP
 void ObsticleAvoider::process_images(){
     if(color.empty() || depth.empty()) return;
 
+    // Need to write opencv code that finds the duck
+
 
     // Publish the result image for debugging
     cv_bridge::CvImage out_image = cv_bridge::CvImage();
