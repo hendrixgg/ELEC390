@@ -42,6 +42,7 @@ class Driver : public rclcpp::Node {
         void line_block_callback(const std_msgs::msg::Float32::SharedPtr msg);
         void state_callback(const std_msgs::msg::String::SharedPtr msg);
         void timer_callback(void);
+        void intersection_timer_callback();
         rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr line_dev_sub,
                                                                 distance_sub,
                                                                 line_sub;
@@ -49,13 +50,19 @@ class Driver : public rclcpp::Node {
                                                              turn_pub;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr state_sub;
-        rclcpp::TimerBase::SharedPtr timer;
+        rclcpp::TimerBase::SharedPtr timer, intersection_timer;
         
         float error, error_last, error_sum;
         enum eState state, state_prev_d, state_prev_l;
         float drive_pow;
         float turn_angle;
-
+        // Parameters
+        float param_drive_power;
+        float param_left_turn_angle;
+        float param_pid_p;
+        float param_pid_i;
+        float param_pid_d;
+        int param_intersection_time;
 };
 
 #endif
