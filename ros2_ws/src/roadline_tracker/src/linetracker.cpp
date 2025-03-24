@@ -54,7 +54,7 @@ void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
 
     // Threshold the image
     cv::Mat thresholded;
-    cv::threshold(gray, thresholded, 80, 255, cv::THRESH_BINARY);
+    cv::threshold(gray, thresholded, 110, 255, cv::THRESH_BINARY);
 
     cv::Mat cv_out;
     cv::cvtColor(thresholded, cv_out, cv::COLOR_GRAY2BGR);

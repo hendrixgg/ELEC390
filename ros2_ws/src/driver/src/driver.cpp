@@ -20,6 +20,8 @@ Driver::Driver() : Node("driver_node") {
     this->state_pub = this->create_publisher<std_msgs::msg::String>("state/current", 10);
     this->state_sub = this->create_subscription<std_msgs::msg::String>("state/next", 10,
             std::bind(&Driver::state_callback, this, std::placeholders::_1));
+    this->timer = this->create_wall_timer(std::chrono::milliseconds(100),
+            std::bind(&Driver::timer_callback, this));
     error = 0;
     error_last = 0;
     error_sum = 0;
@@ -47,9 +49,6 @@ void Driver::line_dev_callback(const std_msgs::msg::Float32::SharedPtr msg){
     float pow = p + i + d;
     this->turn_angle = pow;
     this->drive_pow = 40;
-
-    if(state == eState_Driving)
-        this->change_state(eState_Driving);
 }
 
 void Driver::change_state(enum eState state){
@@ -57,64 +56,27 @@ void Driver::change_state(enum eState state){
             "CHANGE STATE %s -> %s\n",
             stateString[this->state].c_str(), stateString[state].c_str());
     this->state = state;
-    // Send out messages to drivetrain
-    std_msgs::msg::Float32 drive_msg;
-    std_msgs::msg::Float32 turn_msg;
-    switch(this->state){
-        case eState_Driving:
-            drive_msg.data = drive_pow;
-            this->drive_pow_pub->publish(drive_msg);
-            turn_msg.data = turn_angle;
-            this->turn_pub->publish(turn_msg);
-            break;
-        case eState_Blocked:
-        case eState_Waiting:
-            drive_msg.data = 0;
-            this->drive_pow_pub->publish(drive_msg);
-            turn_msg.data = 0;
-            this->turn_pub->publish(turn_msg);
-        case eState_Turn_Left:
-            // Fixed turn radius for left turns
-            drive_msg.data = drive_pow;
-            this->drive_pow_pub->publish(drive_msg);
-            turn_msg.data = -20;
-            this->turn_pub->publish(turn_msg);
-        case eState_Turn_Right:
-            // Follow the line for right turns
-            drive_msg.data = drive_pow;
-            this->drive_pow_pub->publish(drive_msg);
-            turn_msg.data = turn_angle;
-            this->turn_pub->publish(turn_msg);
-        case eState_Turn_Straight:
-            // Follow the line for right turns
-            drive_msg.data = 40;
-            this->drive_pow_pub->publish(drive_msg);
-            turn_msg.data = 0;
-            this->turn_pub->publish(turn_msg);
-
-    }
 }
 
 void Driver::distance_callback(const std_msgs::msg::Float32::SharedPtr msg){
     float cm = msg->data;
-    if(cm != -1 && cm < 10){
+    if(cm != -1 && cm < 20){
         if(state != eState_Blocked)
             state_prev_d = state;
-        change_state(eState_Blocked);
+        this->change_state(eState_Blocked);
     }
-    else{
-        state = state_prev_d;
-        state_prev_d = state;
+    else if (state == eState_Blocked){
+        this->change_state(state_prev_d);
     }
 
 }
 void Driver::line_block_callback(const std_msgs::msg::Float32::SharedPtr msg){
-    if(msg->data > 1.2){
-        state_prev_l = state;
-        state = eState_Waiting;
+    if(msg->data > 1){
+        if(state != eState_Waiting)
+            state_prev_l = state;
+        this->change_state(eState_Waiting);
     }
     else{
-        state = state_prev_d;
         state_prev_l = state;
     }
 }
@@ -140,4 +102,50 @@ void Driver::state_callback(const std_msgs::msg::String::SharedPtr msg){
         new_state = eState_Turn_Straight;
     }
     this->change_state(new_state);
+}
+
+void Driver::timer_callback(void){
+    std_msgs::msg::String state_msg;
+    state_msg.data = stateString[state];
+    this->state_pub->publish(state_msg);
+    // Send out messages to drivetrain
+    std_msgs::msg::Float32 drive_msg;
+    std_msgs::msg::Float32 turn_msg;
+    switch(this->state){
+        case eState_Driving:
+            drive_msg.data = drive_pow;
+            this->drive_pow_pub->publish(drive_msg);
+            turn_msg.data = turn_angle;
+            this->turn_pub->publish(turn_msg);
+            break;
+        case eState_Blocked:
+        case eState_Waiting:
+            drive_msg.data = 0;
+            this->drive_pow_pub->publish(drive_msg);
+            turn_msg.data = 0;
+            this->turn_pub->publish(turn_msg);
+            break;
+        case eState_Turn_Left:
+            // Fixed turn radius for left turns
+            drive_msg.data = drive_pow;
+            this->drive_pow_pub->publish(drive_msg);
+            turn_msg.data = -20;
+            this->turn_pub->publish(turn_msg);
+            break;
+        case eState_Turn_Right:
+            // Follow the line for right turns
+            drive_msg.data = drive_pow;
+            this->drive_pow_pub->publish(drive_msg);
+            turn_msg.data = turn_angle;
+            this->turn_pub->publish(turn_msg);
+            break;
+        case eState_Turn_Straight:
+            // Follow the line for right turns
+            drive_msg.data = 40;
+            this->drive_pow_pub->publish(drive_msg);
+            turn_msg.data = 0;
+            this->turn_pub->publish(turn_msg);
+            break;
+
+    }
 }

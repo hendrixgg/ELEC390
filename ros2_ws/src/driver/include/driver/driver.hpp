@@ -41,6 +41,7 @@ class Driver : public rclcpp::Node {
         void distance_callback(const std_msgs::msg::Float32::SharedPtr msg);
         void line_block_callback(const std_msgs::msg::Float32::SharedPtr msg);
         void state_callback(const std_msgs::msg::String::SharedPtr msg);
+        void timer_callback(void);
         rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr line_dev_sub,
                                                                 distance_sub,
                                                                 line_sub;
