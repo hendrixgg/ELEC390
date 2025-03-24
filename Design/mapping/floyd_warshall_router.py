@@ -1,6 +1,8 @@
 from map_types import RawMap, AdjListMap, NodeId, EdgeId, Edge
-from trip_planning_model import ActualTrip, TripRouter, TripRoute
-from typing import Sequence, Tuple, Callable
+from trip_planning_model import ActualTrip, TripRouter, TripRoute, TripPlan
+from typing import Sequence, Tuple, Callable, Literal
+
+import math
 
 
 def floyd_warshall_router(map: AdjListMap) -> Tuple[Callable[[ActualTrip], float], TripRouter]:
@@ -78,6 +80,57 @@ def floyd_warshall_router(map: AdjListMap) -> Tuple[Callable[[ActualTrip], float
         return dist[trip.src_id][trip.dest_id]
     return min_distance, router
 
+# Need a function that takes in two edges connected by a node (previous_edge, next_edge) and returns the direction between them, (either 'straight', 'left', or 'right').
+
+
+def direction_between_edges(map: AdjListMap, previous_edge: EdgeId, next_edge: EdgeId) -> Literal["straight", "left", "right"]:
+    """
+    Determines the direction between two edges based on the angle between them.
+
+    - If the angle between the two edges is greater than pi/4, then the direction is 'left'.
+    - If the angle between the two edges is less than -pi/4, then the direction is 'right'.
+    - Otherwise, the direction is 'straight'.
+    """
+    if map.raw.edges[previous_edge].dest != map.raw.edges[next_edge].src:
+        raise ValueError(
+            "direction_between_edges: edges are not connected by a node")
+    # get the 3 nodes
+    previous_node = map.raw.edges[previous_edge].src
+    common_node = map.raw.edges[previous_edge].dest
+    next_node = map.raw.edges[next_edge].dest
+    # use the cross product to determine the direction
+    prev_edge_vector = (map.raw.nodes[common_node].x - map.raw.nodes[previous_node].x,
+                        map.raw.nodes[common_node].y - map.raw.nodes[previous_node].y)
+    next_edge_vector = (map.raw.nodes[next_node].x - map.raw.nodes[common_node].x,
+                        map.raw.nodes[next_node].y - map.raw.nodes[common_node].y)
+    angle = math.atan2(next_edge_vector[1], next_edge_vector[0]) - \
+        math.atan2(prev_edge_vector[1], prev_edge_vector[0])
+    if angle > math.pi/4:
+        return 'left'
+    elif angle < -math.pi/4:
+        return 'right'
+    return 'straight'
+
+
+def trip_plan_to_directions(trip_plan: TripPlan, prev_edge: EdgeId) -> Tuple[Literal["straight", "left", "right"], ...]:
+    """Returns the directions for the given route.
+
+    The first direction is the direction from the previous edge to the first edge in the route.
+    """
+    if not trip_plan.map.raw.edge_id_valid(prev_edge):
+        raise ValueError("trip_route_to_directions: invalid previous edge")
+    map = trip_plan.map
+    route = trip_plan.route
+
+    if map.raw.edges[prev_edge].dest != map.raw.edges[route[0]].src:
+        raise ValueError(
+            "trip_route_to_directions: previous_edge is not connected to the first edge in the route")
+    directions = [direction_between_edges(map, prev_edge, route[0])]
+    for i in range(len(route)-1):
+        directions.append(
+            direction_between_edges(map, route[i], route[i+1]))
+    return tuple(directions)
+
 
 # Test cases
 if __name__ == "__main__":
@@ -110,7 +163,12 @@ if __name__ == "__main__":
 
     strong_router = floyd_warshall_router(strong_map)[1]
     try:
-        print(TripPlan.from_trip_request(strong_map, TripRequest(
-            Node(0.5, 0.5), Node(0.6, 0.5)), strong_router))
+        trip_plan = TripPlan.from_trip_request(strong_map, TripRequest(
+            Node(0.5, 0.5), Node(0.6, 0.5)), strong_router)
+        print(trip_plan)
+        print(trip_plan_to_directions(trip_plan, 2))
     except ValueError as _:
         print(traceback.format_exc())
+
+    import visualize_map
+    visualize_map.plot_map(strong_map.raw)
