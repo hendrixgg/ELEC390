@@ -62,7 +62,10 @@ class Driver : public rclcpp::Node {
         float param_pid_p;
         float param_pid_i;
         float param_pid_d;
+        float param_line_trig;
+        float param_turn_factor;
         int param_intersection_time;
+        rclcpp::Time last_intersection;
 };
 
 #endif
