@@ -27,13 +27,13 @@ def generate_launch_description():
         #                  "intersection_time_ms": 300,
         #                  }]
         #     ),
-        # Node(
-        #     package='vision',
-        #     executable='roadline_tracker',
-        #     name='roadline_tracker',
-        #     parameters=[{"image_topic": "/pix_camera/image_raw",
-        #                  "output_topic": "line_deviation"}]
-        #     ),
+        Node(
+            package='vision',
+            executable='roadline_tracker',
+            name='roadline_tracker',
+            parameters=[{"image_topic": "/pix_camera/image_raw",
+                         "output_topic": "line_deviation"}]
+            ),
         # Node(
         #     package='realsense2_camera',
         #     executable='realsense2_camera_node',
