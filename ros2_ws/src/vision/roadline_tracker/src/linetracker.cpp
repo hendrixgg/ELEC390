@@ -50,7 +50,7 @@ void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
     }
     cv::Mat gray;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    cv::medianBlur(gray, gray, 9);
+    cv::medianBlur(gray, gray, 13);
 
     // Threshold the image
     cv::Mat thresholded;
@@ -74,25 +74,38 @@ void LineTracker::cv_callback(const sensor_msgs::msg::Image::SharedPtr msg){
 
     // Find the white line using HoughLinesP
     std::vector<cv::Vec4i> lines;
-    cv::HoughLinesP(thresholded, lines, 1, CV_PI / 180, 50, 50, 10);
+    cv::Mat canny;
+    cv::Canny(thresholded, canny, 100, 200);
+    cv::HoughLinesP(canny, lines, 1, CV_PI / 180, 50, 50, 10);
     if (!lines.empty()) {
-        cv::Vec4i l = lines[0];  // Take the first detected line
-        int x_center = (l[0] + l[2]) / 2;
-        int y_center = (l[1] + l[3]) / 2;
+        float average_reading = 0;
+        cv::Point avg;
+        for(size_t i = 0; i < lines.size(); i++){
+            cv::Vec4i l = lines[i];
+            int x_center = (l[0] + l[2]) / 2;
+            int y_center = (l[1] + l[3]) / 2;
 
-        // Draw the detected line
-        cv::line(cv_out, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0, 255, 0), 2);
+            // Draw the detected line
+            cv::line(cv_out, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0, 255, 0), 2);
 
-        // Blend Hough & Moments
-        cv::Point final_center = cv::Point((center.x + x_center) / 2, (center.y + y_center) / 2);
+            // Blend Hough & Moments
+            cv::Point final_center = cv::Point((center.x + x_center) / 2, (center.y + y_center) / 2);
+            avg.x += final_center.x;
+            avg.y += final_center.y;
 
-        // Draw a dot at the final center
-        cv::circle(cv_out, final_center, 5, cv::Scalar(255, 0, 0), -1);
-
+            // Draw a dot at the final center
+            cv::circle(cv_out, final_center, 5, cv::Scalar(255, 0, 0), -1);
+            average_reading += final_center.y - static_cast<float>(msg->height) / 2.0;
+            average_reading -= final_center.x - static_cast<float>(msg->width) / 2.0;
+        }
+        average_reading /= (float)lines.size();
+        avg.x /= lines.size();
+        avg.y /= lines.size();
+        cv::circle(cv_out, avg, 5, cv::Scalar(0, 0, 255), -1);
         // Publish the deviation from the center of the image
         std_msgs::msg::Float32 line_dev_msg;
-        line_dev_msg.data = final_center.y - static_cast<float>(msg->height) / 2.0;
-        line_dev_msg.data -= final_center.x - static_cast<float>(msg->width) / 2.0;
+        // line_dev_msg.data = (average_reading + center.y - center.x)/2.0;
+        line_dev_msg.data = average_reading;
         this->line_dev_pub->publish(line_dev_msg);
     }
 

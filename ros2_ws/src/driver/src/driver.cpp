@@ -11,11 +11,11 @@
 
 Driver::Driver() : Node("driver_node") {
     // Get Parameters
-    this->declare_parameter("drive_power", 40.0);
+    this->declare_parameter("drive_power", 30.0);
     this->declare_parameter("left_turn_angle", -20.0);
-    this->declare_parameter("pid_p", 0.1);
-    this->declare_parameter("pid_i", 0.2);
-    this->declare_parameter("pid_d", 0.05);
+    this->declare_parameter("pid_p", 0.0);
+    this->declare_parameter("pid_i", 0.3);
+    this->declare_parameter("pid_d", 0.1);
     this->declare_parameter("intersection_time_ms", 300);
     
     this->param_drive_power = this->get_parameter("drive_power").as_double();
@@ -50,7 +50,7 @@ Driver::Driver() : Node("driver_node") {
     error = 0;
     error_last = 0;
     error_sum = 0;
-    this->state = eState_Driving;
+    this->state = eState_Waiting;
 }
 
 Driver::~Driver(){
