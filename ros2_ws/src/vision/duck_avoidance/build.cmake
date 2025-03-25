@@ -11,6 +11,8 @@ find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV 4 REQUIRED)
 find_package(message_filters REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
 
 
 # Gather all sources for this project
@@ -19,7 +21,7 @@ file(GLOB_RECURSE PROJECT_SOURCES FOLLOW_SYMLINKS
 )
 
 # Setup Library Dependencies
-set(${NODE}_DEPS rclcpp std_msgs sensor_msgs cv_bridge OpenCV message_filters)
+set(${NODE}_DEPS rclcpp std_msgs sensor_msgs cv_bridge OpenCV message_filters geometry_msgs)
 
 # Add to include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${NODE}/include)

@@ -1,5 +1,5 @@
 /**
- * @file obsticle_avoider.hpp
+ * @file obstacle_avoider.hpp
  * @author Jacob Chisholm
  * @brief PiCarX Driver Node
  * @date 2025-02-27
@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _OBSTICLE_AVOIDER_HPP_
-#define _OBSTICLE_AVOIDER_HPP_
+#ifndef _OBSTACLE_AVOIDER_HPP_
+#define _OBSTACLE_AVOIDER_HPP_
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float32.hpp"
@@ -17,24 +17,28 @@
 #include "message_filters/synchronizer.h"
 #include "message_filters/sync_policies/approximate_time.h"
 #include "opencv2/opencv.hpp"
+#include "geometry_msgs/msg/point.hpp"
+#include "sensor_msgs/msg/point_cloud.hpp"
 
-class ObsticleAvoider : public rclcpp::Node {
+class ObstacleAvoider : public rclcpp::Node {
     public:
-        ObsticleAvoider();
+        ObstacleAvoider();
     private:
         void color_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg);
         void depth_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg);
+        void infra_callback(const sensor_msgs::msg::Image::ConstSharedPtr msg);
         void process_images();
 
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr color_sub;
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_sub;
+        rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr infra_sub;
 
         cv::Mat color;
         cv::Mat depth;
+        cv::Mat infra;
 
-        std::mutex data_mutex_;  // To protect last_color_ and last_depth_
         rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub;
-        rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr min_distance_pub;
+        rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr obstacles_pub;
 
 };
 
