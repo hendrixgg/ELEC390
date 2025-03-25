@@ -41,12 +41,15 @@ Driver::Driver() : Node("driver_node") {
     this->state_pub = this->create_publisher<std_msgs::msg::String>("state/current", 10);
     this->state_sub = this->create_subscription<std_msgs::msg::String>("state/next", 10,
             std::bind(&Driver::state_callback, this, std::placeholders::_1));
+    this->rs_obs_sub = this->create_subscription<sensor_msgs::msg::PointCloud>(
+            "rs_obstacles", 10,
+            std::bind(&Driver::rs_obs_callback, this, std::placeholders::_1));
 
     // System Runtime Timer
-    this->timer = this->create_wall_timer(std::chrono::milliseconds(100),
+    this->timer = this->create_wall_timer(std::chrono::milliseconds(20),
             std::bind(&Driver::timer_callback, this));
     // Intersection Timer (One Shot)
-    this->intersection_timer = this->create_wall_timer(std::chrono::milliseconds(100),
+    this->intersection_timer = this->create_wall_timer(std::chrono::milliseconds(20),
             std::bind(&Driver::intersection_timer_callback, this));
 
     error = 0;
@@ -54,6 +57,7 @@ Driver::Driver() : Node("driver_node") {
     error_sum = 0;
     this->state = eState_Waiting;
     last_intersection = get_clock()->now();
+    this->max_area_avg = 0;
 }
 
 Driver::~Driver(){
@@ -123,6 +127,7 @@ void Driver::distance_callback(const std_msgs::msg::Float32::SharedPtr msg){
     else if (state == eState_Blocked){
         this->change_state(state_prev_d);
     }
+    this->timer_callback();
 
 }
 void Driver::line_block_callback(const std_msgs::msg::Float32::SharedPtr msg){
@@ -134,6 +139,32 @@ void Driver::line_block_callback(const std_msgs::msg::Float32::SharedPtr msg){
     else{
         state_prev_l = state;
     }
+}
+
+void Driver::rs_obs_callback(const sensor_msgs::msg::PointCloud::SharedPtr msg){
+    int max_area = 0;
+    for(size_t i = 0; i < msg->points.size(); i++){
+        geometry_msgs::msg::Point32 point = msg->points[i];
+        // int x = point.x;
+        int area = point.z;
+
+        if(area > max_area){
+            max_area = area;
+        }
+
+    }
+    max_area_avg += max_area;
+    max_area_avg /= 2;
+    if(max_area_avg >= 3500){
+        RCLCPP_WARN(this->get_logger(), "Max Area = %d", max_area);
+        if(state != eState_Blocked)
+            state_prev_d = state;
+        this->change_state(eState_Blocked);
+    }
+    else if (state == eState_Blocked){
+        this->change_state(state_prev_d);
+    }
+    this->timer_callback();
 }
 
 void Driver::state_callback(const std_msgs::msg::String::SharedPtr msg){
@@ -158,6 +189,7 @@ void Driver::state_callback(const std_msgs::msg::String::SharedPtr msg){
     }
     this->change_state(new_state);
 }
+
 
 void Driver::timer_callback(void){
     std_msgs::msg::String state_msg;

@@ -163,7 +163,7 @@ void ObstacleAvoider::process_images(){
         point.x = center_x;
         point.y = center_y;
         // Use Z to store area of obstacle
-        point.z = bounding_box.x*bounding_box.y;
+        point.z = bounding_box.width*bounding_box.height;
         obstacles.push_back(point);
     }
 
